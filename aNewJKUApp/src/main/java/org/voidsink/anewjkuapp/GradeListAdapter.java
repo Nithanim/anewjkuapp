@@ -244,7 +244,7 @@ public class GradeListAdapter extends BaseExpandableListAdapter implements
 		gradeTypeHolder.type.setText(mContext.getString(gradeType
 				.getStringResID()));
 		double avgGrade = AppUtils.getAvgGrade(
-                getGradesByGroupPosition(groupPosition), false, GradeType.ALL, false);
+                getGradesByGroupPosition(groupPosition), false, GradeType.ALL, PreferenceWrapper.getPositiveGradesOnly(mContext));
 		gradeTypeHolder.avgGrade.setText(String.format("avg %.2f", avgGrade));
 
 		return convertView;

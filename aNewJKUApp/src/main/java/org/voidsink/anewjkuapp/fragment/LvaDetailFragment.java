@@ -128,8 +128,8 @@ public class LvaDetailFragment extends BaseFragment {
 
 		double minEcts = mTerms.size() * 30;
 
-		XYPlot barChart = (XYPlot) view.findViewById(R.id.lva_bar_chart);
-		PieChart pieChart = (PieChart) view.findViewById(R.id.lva_pie_chart);
+		XYPlot barChart = (XYPlot) view.findViewById(R.id.stat_card_lva_diagram_bar);
+		PieChart pieChart = (PieChart) view.findViewById(R.id.stat_card_lva_diagram_pie);
 
 		if (PreferenceWrapper.getUseLvaBarChart(getContext())) {
 			pieChart.setVisibility(View.GONE);

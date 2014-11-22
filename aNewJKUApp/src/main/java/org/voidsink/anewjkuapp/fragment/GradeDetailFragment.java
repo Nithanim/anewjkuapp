@@ -3,6 +3,7 @@ package org.voidsink.anewjkuapp.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.voidsink.anewjkuapp.PreferenceWrapper;
 import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.GradeListAdapter;
 import org.voidsink.anewjkuapp.R;
@@ -89,11 +90,12 @@ public class GradeDetailFragment extends BaseFragment {
 			mListView.expandGroup(0);
 		}
 
-		PieChart pieChart = (PieChart) view.findViewById(R.id.grade_pie_chart);
-
 		boolean ectsWeighting = false;
+        boolean positiveOnly = PreferenceWrapper.getPositiveGradesOnly(getContext());
 
-		// init pie chart
+        PieChart pieChart = (PieChart) view.findViewById(R.id.grade_pie_chart);
+
+        // init pie chart
 		AppUtils.addSerieToPieChart(pieChart,
 				getString(Grade.G1.getStringResID()),
 				AppUtils.getGradePercent(this.mGrades, Grade.G1, ectsWeighting),
@@ -110,10 +112,12 @@ public class GradeDetailFragment extends BaseFragment {
 				getString(Grade.G4.getStringResID()),
 				AppUtils.getGradePercent(this.mGrades, Grade.G4, ectsWeighting),
 				Grade.G4.getColor());
-		AppUtils.addSerieToPieChart(pieChart,
-				getString(Grade.G5.getStringResID()),
-				AppUtils.getGradePercent(this.mGrades, Grade.G5, ectsWeighting),
-				Grade.G5.getColor());
+		if (!positiveOnly) {
+            AppUtils.addSerieToPieChart(pieChart,
+                    getString(Grade.G5.getStringResID()),
+                    AppUtils.getGradePercent(this.mGrades, Grade.G5, ectsWeighting),
+                    Grade.G5.getColor());
+        }
 
 		if (pieChart.getSeriesSet().size() > 0) {
 			pieChart.setVisibility(View.VISIBLE);
