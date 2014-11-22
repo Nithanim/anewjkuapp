@@ -99,7 +99,8 @@ public class MensaDashclockExtension extends DashClockExtension {
 						if (!status.isEmpty()) {
 							status += ", ";
 						} else {
-							status += "Mensa: ";
+							status += getString(R.string.title_mensa);
+                            status += ": ";
 						}
 						status += mensa.getName();
 
@@ -124,8 +125,8 @@ public class MensaDashclockExtension extends DashClockExtension {
 		if (mShowMenu || mShowAlays) {
 			publishUpdate(new ExtensionData()
 					.visible(true)
-					.icon(R.drawable.ic_launcher_grey)
-					.status("Mensa")
+					.icon(R.drawable.ic_food)
+					.status(getString(R.string.title_mensa))
 					.expandedTitle(status)
 					.expandedBody(body)
 					.clickIntent(

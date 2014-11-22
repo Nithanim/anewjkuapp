@@ -5,13 +5,13 @@
     android:orientation="vertical" >
 
     <com.androidplot.pie.PieChart
-        android:id="@+id/lva_pie_chart"
+        android:id="@+id/stat_card_lva_diagram_pie"
         android:layout_width="match_parent"
         android:layout_height="170dp"
         android:padding="3dp" />
 
     <com.androidplot.xy.XYPlot
-        android:id="@+id/lva_bar_chart"
+        android:id="@+id/stat_card_lva_diagram_bar"
         android:layout_width="match_parent"
         android:layout_height="170dp"
         androidPlot.graphWidget.marginBottom="5dp"
