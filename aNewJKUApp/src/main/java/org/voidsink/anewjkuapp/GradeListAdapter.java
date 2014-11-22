@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
 import org.voidsink.anewjkuapp.kusss.GradeType;
 import org.voidsink.anewjkuapp.utils.AppUtils;
+import org.voidsink.anewjkuapp.utils.UIUtils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,117 +20,45 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class GradeListAdapter extends BaseExpandableListAdapter implements
-		ListAdapter {
+public class GradeListAdapter extends StickyArrayAdapter<ExamGrade> {
 
-	private LayoutInflater inflater;
-	private Context mContext;
+    private static final DateFormat df = SimpleDateFormat.getDateInstance();
+    private LayoutInflater inflater;
 
-	private HashMap<GradeType, List<ExamGrade>> mGrades;
-	private List<ExamGrade> mAllGrades;
+    public GradeListAdapter(Context context) {
+        super(context, R.layout.grade_list_grade);
 
-	private static final DateFormat df = SimpleDateFormat.getDateInstance();
+        this.inflater = LayoutInflater.from(context);
+    }
 
-	public GradeListAdapter(Context context) {
-		super();
-
-		this.mContext = context;
-		this.inflater = LayoutInflater.from(context);
-		this.mGrades = new HashMap<GradeType, List<ExamGrade>>();
-		this.mAllGrades = new ArrayList<ExamGrade>();
-	}
-
-	@Override
-	public boolean isEnabled(int position) {
-		return false;
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = null;
+        ExamGrade item = this.getItem(position);
+        if (item !=null) {
+            view = getGradeView(convertView, parent, item);
+        } else {
+            view = null;
+        }
+        return view;
+    }
 
 	private static class GradeListGradeHolder {
 		public TextView grade;
 		public TextView date;
-		public View chip;
 		public TextView term;
 		private TextView title;
 		private TextView lvaNr;
-		// private TextView skz;
+		private TextView skz;
+        public View chipBack;
+        public TextView chipInfo;
+        public TextView chipGrade;
 	}
 
-	private class GradeListTypeHolder {
-		private TextView type;
-		private TextView avgGrade;
+	private View getGradeView(View convertView, ViewGroup parent,
+                             ExamGrade item) {
 
-	}
-
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getItemViewType(int position) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getViewTypeCount() {
-		return 2;
-	}
-
-	@Override
-	public boolean hasStableIds() {
-		return false;
-	}
-
-	public GradeType getGradeTypeByGroupPosition(int groupPosition) {
-		return this.mGrades.keySet().toArray(new GradeType[] {})[groupPosition];
-	}
-
-	public List<ExamGrade> getGradesByGroupPosition(int groupPosition) {
-		if (groupPosition < this.mGrades.size()) {
-			return this.mGrades.get(getGradeTypeByGroupPosition(groupPosition));
-		}
-		return this.mAllGrades;
-	}
-
-	@Override
-	public Object getChild(int groupPosition, int childPosition) {
-		List<ExamGrade> gradesByType = getGradesByGroupPosition(groupPosition);
-		if (gradesByType == null) {
-			return null;
-		}
-		return gradesByType.get(childPosition);
-	}
-
-	@Override
-	public long getChildId(int groupPosition, int childPosition) {
-		return 0;
-	}
-
-	@Override
-	public View getChildView(int groupPosition, int childPosition,
-			boolean isLastChild, View convertView, ViewGroup parent) {
-
-		ExamGrade gradeItem = (ExamGrade) getChild(groupPosition, childPosition);
+		ExamGrade mGrade = (ExamGrade) item;
 		GradeListGradeHolder gradeItemHolder = null;
 
 		if (convertView == null) {
@@ -141,14 +71,16 @@ public class GradeListAdapter extends BaseExpandableListAdapter implements
 					.findViewById(R.id.grade_list_grade_lvanr);
 			gradeItemHolder.term = (TextView) convertView
 					.findViewById(R.id.grade_list_grade_term);
-			// gradeItemHolder.skz = (TextView) convertView
-			// .findViewById(R.id.grade_list_grade_skz);
+			gradeItemHolder.skz = (TextView) convertView
+                    .findViewById(R.id.grade_list_grade_skz);
 			gradeItemHolder.date = (TextView) convertView
 					.findViewById(R.id.grade_list_grade_date);
 			gradeItemHolder.grade = (TextView) convertView
 					.findViewById(R.id.grade_list_grade_grade);
-			gradeItemHolder.chip = (View) convertView
-					.findViewById(R.id.grade_list_grade_chip);
+			gradeItemHolder.chipBack = (View) convertView
+					.findViewById(R.id.grade_chip);
+            gradeItemHolder.chipInfo = (TextView) convertView.findViewById(R.id.grade_chip_info);
+            gradeItemHolder.chipGrade = (TextView) convertView.findViewById(R.id.grade_chip_grade);
 
 			convertView.setTag(gradeItemHolder);
 		}
@@ -157,125 +89,70 @@ public class GradeListAdapter extends BaseExpandableListAdapter implements
 			gradeItemHolder = (GradeListGradeHolder) convertView.getTag();
 		}
 
-		gradeItemHolder.title.setText(gradeItem.getTitle());
-		if (!gradeItem.getLvaNr().isEmpty()) {
-			gradeItemHolder.lvaNr
-					.setText(gradeItem.getLvaNr());
-			gradeItemHolder.lvaNr.setVisibility(View.VISIBLE);
-		} else {
-			gradeItemHolder.lvaNr.setVisibility(View.GONE);
-		}
+        gradeItemHolder.title.setText(mGrade.getTitle());
 
-		if (!gradeItem.getTerm().isEmpty()) {
-			gradeItemHolder.term.setText(gradeItem.getTerm());
-			gradeItemHolder.term.setVisibility(View.VISIBLE);
-		} else {
-			gradeItemHolder.term.setVisibility(View.GONE);
-		}
+        UIUtils.setTextAndVisibility(gradeItemHolder.lvaNr, mGrade.getLvaNr());
+        UIUtils.setTextAndVisibility(gradeItemHolder.term, mGrade.getTerm());
 
-		gradeItemHolder.date.setText(df.format(gradeItem.getDate()));
-		gradeItemHolder.grade.setText(mContext.getString(gradeItem.getGrade()
-				.getStringResID()));
-		gradeItemHolder.chip
-				.setBackgroundColor(gradeItem.getGrade().getColor());
+        if (mGrade.getSkz() > 0) {
+            gradeItemHolder.skz.setText(String.format("[%d]", mGrade.getSkz()));
+            gradeItemHolder.skz.setVisibility(View.VISIBLE);
+        } else {
+            gradeItemHolder.skz.setVisibility(View.GONE);
+        }
 
-		return convertView;
-	}
+        gradeItemHolder.chipBack.setBackgroundColor(mGrade.getGrade().getColor());
+        gradeItemHolder.chipGrade.setText(String.format("%d", mGrade.getGrade().getValue()));
+        gradeItemHolder.chipInfo.setText(String.format("%.2f ECTS", mGrade.getEcts()));
 
-	@Override
-	public int getChildrenCount(int groupPosition) {
-		List<ExamGrade> gradesByType = getGradesByGroupPosition(groupPosition);
-		if (gradesByType == null) {
-			return 0;
-		}
-		return gradesByType.size();
-	}
+        final DateFormat df = DateFormat.getDateInstance();
 
-	@Override
-	public Object getGroup(int groupPosition) {
-		return getGradesByGroupPosition(groupPosition);
-	}
-
-	@Override
-	public int getGroupCount() {
-		int count = this.mGrades.size();
-		if (count > 1) {
-			count++;
-		}
-		return count++;
-	}
-
-	@Override
-	public long getGroupId(int groupPosition) {
-		return 0;
-	}
-
-	@Override
-	public View getGroupView(int groupPosition, boolean isExpanded,
-			View convertView, ViewGroup parent) {
-		GradeType gradeType = GradeType.ALL;
-		if (groupPosition < this.mGrades.size()) {
-			gradeType = getGradeTypeByGroupPosition(groupPosition);
-		}
-		GradeListTypeHolder gradeTypeHolder = null;
-
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.grade_list_type, parent,
-					false);
-			gradeTypeHolder = new GradeListTypeHolder();
-			gradeTypeHolder.type = (TextView) convertView
-					.findViewById(R.id.grade_list_type_title);
-			gradeTypeHolder.avgGrade = (TextView) convertView
-					.findViewById(R.id.grade_list_type_avg_grade);
-
-			convertView.setTag(gradeTypeHolder);
-		}
-
-		if (getChildrenCount(groupPosition) > 0) {
-			convertView.setVisibility(View.VISIBLE);
-		} else {
-			convertView.setVisibility(View.GONE);
-		}
-
-		if (gradeTypeHolder == null) {
-			gradeTypeHolder = (GradeListTypeHolder) convertView.getTag();
-		}
-
-		gradeTypeHolder.type.setText(mContext.getString(gradeType
-				.getStringResID()));
-		double avgGrade = AppUtils.getAvgGrade(
-                getGradesByGroupPosition(groupPosition), false, GradeType.ALL, PreferenceWrapper.getPositiveGradesOnly(mContext));
-		gradeTypeHolder.avgGrade.setText(String.format("avg %.2f", avgGrade));
+        gradeItemHolder.date.setText(df.format(mGrade.getDate()));
+        gradeItemHolder.grade.setText(getContext().getString(mGrade.getGrade()
+                .getStringResID()));
 
 		return convertView;
 	}
 
-	@Override
-	public boolean isChildSelectable(int groupPosition, int childPosition) {
-		return false;
-	}
+    @Override
+    public int getViewTypeCount() {
+        return 1;
+    }
 
-	public void clear() {
-		this.mGrades.clear();
-		this.notifyDataSetInvalidated();
-	}
+    @Override
+    public int getItemViewType(int position) {
+        return 0;
+    }
 
-	public void addAll(List<ExamGrade> listItems) {
-		for (ExamGrade listItem : listItems) {
-			add(listItem);
-		}
-		this.notifyDataSetChanged();
-	}
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
+    }
 
-	public void add(ExamGrade grade) {
-		List<ExamGrade> gradesByType = this.mGrades.get(grade.getGradeType());
-		if (gradesByType == null) {
-			gradesByType = new ArrayList<ExamGrade>();
-			this.mGrades.put(grade.getGradeType(), gradesByType);
-		}
-		gradesByType.add(grade);
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup viewGroup) {
+        // Build your custom HeaderView
+        LayoutInflater mInflater = LayoutInflater.from(getContext());
+        final View headerView = mInflater.inflate(R.layout.list_header, null);
+        final TextView tvHeaderTitle = (TextView) headerView.findViewById(R.id.list_header_text);
 
-		this.mAllGrades.add(grade);
-	}
+        ExamGrade card = getItem(position);
+        if (card instanceof ExamGrade) {
+            tvHeaderTitle.setText(getContext().getString(((ExamGrade) card).getGradeType().getStringResID()));
+
+        }
+        return headerView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        ExamGrade card = getItem(position);
+        if (card instanceof ExamGrade) {
+            return ((ExamGrade) card).getGradeType().getStringResID();
+        }
+        return 0;
+    }
+
+
 
 }

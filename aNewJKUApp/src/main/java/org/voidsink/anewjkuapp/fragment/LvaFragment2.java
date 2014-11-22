@@ -6,9 +6,7 @@ import android.content.UriMatcher;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.KusssContentContract;
@@ -21,6 +19,7 @@ import org.voidsink.anewjkuapp.base.SlidingTabsFragment;
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
 import org.voidsink.anewjkuapp.kusss.Lva;
 import org.voidsink.anewjkuapp.provider.KusssContentProvider;
+import org.voidsink.anewjkuapp.utils.Consts;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,17 +37,14 @@ public class LvaFragment2 extends SlidingTabsFragment implements
     private List<ExamGrade> mGrades = new ArrayList<ExamGrade>();
     private ArrayList<String> mTerms = new ArrayList<String>();
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View v = super.onCreateView(inflater, container, savedInstanceState);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-		loadLvas(getActivity());
+        loadLvas(getContext());
+    }
 
-		return v;
-	}
-
-	@Override
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -69,7 +65,7 @@ public class LvaFragment2 extends SlidingTabsFragment implements
 
     @Override
     protected void fillTabs(List<SlidingTabItem> mTabs) {
-        mTabs.add(new LvaTabItem("alle Semester", this.mTerms, this.mLvas, this.mGrades));
+        mTabs.add(new LvaTabItem(getString(R.string.all_terms), this.mTerms, this.mLvas, this.mGrades));
 
         for (String term: mTerms) {
             mTabs.add(new LvaTabItem(term, this.mLvas, this.mGrades));
@@ -97,7 +93,9 @@ public class LvaFragment2 extends SlidingTabsFragment implements
 			protected void onPreExecute() {
 				super.onPreExecute();
 
-				progressDialog = ProgressDialog.show(context,
+                this.terms = new ArrayList<>();
+
+                progressDialog = ProgressDialog.show(context,
 						context.getString(R.string.progress_title),
 						context.getString(R.string.progress_load_lva), true);
 			}
@@ -106,7 +104,6 @@ public class LvaFragment2 extends SlidingTabsFragment implements
 			protected Void doInBackground(Void... params) {
 				this.lvas = KusssContentProvider.getLvas(context);
 				this.grades = KusssContentProvider.getGrades(context);
-				this.terms = new ArrayList<String>();
 				for (Lva lva : this.lvas) {
 					if (this.terms.indexOf(lva.getTerm()) < 0) {
 						this.terms.add(lva.getTerm());
@@ -126,8 +123,6 @@ public class LvaFragment2 extends SlidingTabsFragment implements
 
 			@Override
 			protected void onPostExecute(Void result) {
-				progressDialog.dismiss();
-
 				// Log.i(TAG, "loadLvas" + this.terms);
 
                 mLvas = this.lvas;
@@ -135,6 +130,8 @@ public class LvaFragment2 extends SlidingTabsFragment implements
                 mTerms = this.terms;
 
                 updateData();
+
+                progressDialog.dismiss();
 
 				super.onPostExecute(result);
 			}
@@ -147,4 +144,8 @@ public class LvaFragment2 extends SlidingTabsFragment implements
 		loadLvas(getActivity());
 	}
 
+    @Override
+    protected String getScreenName() {
+        return Consts.SCREEN_LVAS;
+    }
 }
