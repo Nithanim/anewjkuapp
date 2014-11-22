@@ -3,7 +3,7 @@ package org.voidsink.anewjkuapp.fragment;
 import android.graphics.Color;
 import android.provider.CalendarContract;
 
-import org.voidsink.anewjkuapp.AppUtils;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.base.SlidingTabItem;
 import org.voidsink.anewjkuapp.base.SlidingTabsFragment;
 import org.voidsink.anewjkuapp.calendar.CalendarContractWrapper;

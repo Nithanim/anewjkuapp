@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.voidsink.anewjkuapp.Analytics;
+import org.voidsink.anewjkuapp.utils.Analytics;
 import org.voidsink.anewjkuapp.KusssContentContract;
 import org.voidsink.anewjkuapp.provider.KusssDatabaseHelper;
 

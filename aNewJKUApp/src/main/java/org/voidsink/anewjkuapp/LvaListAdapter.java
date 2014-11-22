@@ -6,7 +6,9 @@ import java.util.List;
 import org.voidsink.anewjkuapp.R;
 import org.voidsink.anewjkuapp.calendar.CalendarUtils;
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
+import org.voidsink.anewjkuapp.kusss.LvaState;
 import org.voidsink.anewjkuapp.kusss.LvaWithGrade;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -171,11 +173,11 @@ public class LvaListAdapter extends BaseExpandableListAdapter implements
 	private CharSequence getGroupTitle(int groupPosition) {
 		switch (groupPosition) {
 		case 0:
-			return mContext.getString(R.string.lva_done);
+			return mContext.getString(LvaState.DONE.getStringResID());
 		case 1:
-			return mContext.getString(R.string.lva_open);
+			return mContext.getString(LvaState.OPEN.getStringResID());
 		case 2:
-			return mContext.getString(R.string.lva_all);
+			return mContext.getString(LvaState.ALL.getStringResID());
 		default:
 			return null;
 		}
@@ -213,7 +215,7 @@ public class LvaListAdapter extends BaseExpandableListAdapter implements
 
 		groupHolder.term.setText(getGroupTitle(groupPosition));
 		groupHolder.ects.setText(String.format("%.2f ECTS",
-				AppUtils.getECTS(getLvaList(groupPosition))));
+				AppUtils.getECTS(LvaState.ALL, getLvaList(groupPosition))));
 		return convertView;
 	}
 

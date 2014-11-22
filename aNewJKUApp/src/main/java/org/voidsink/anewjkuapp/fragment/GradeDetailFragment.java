@@ -3,7 +3,7 @@ package org.voidsink.anewjkuapp.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.voidsink.anewjkuapp.AppUtils;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.GradeListAdapter;
 import org.voidsink.anewjkuapp.R;
 import org.voidsink.anewjkuapp.base.BaseFragment;
@@ -96,23 +96,23 @@ public class GradeDetailFragment extends BaseFragment {
 		// init pie chart
 		AppUtils.addSerieToPieChart(pieChart,
 				getString(Grade.G1.getStringResID()),
-				AppUtils.getGradeCount(this.mGrades, Grade.G1, ectsWeighting),
+				AppUtils.getGradePercent(this.mGrades, Grade.G1, ectsWeighting),
 				Grade.G1.getColor());
 		AppUtils.addSerieToPieChart(pieChart,
 				getString(Grade.G2.getStringResID()),
-				AppUtils.getGradeCount(this.mGrades, Grade.G2, ectsWeighting),
+				AppUtils.getGradePercent(this.mGrades, Grade.G2, ectsWeighting),
 				Grade.G2.getColor());
 		AppUtils.addSerieToPieChart(pieChart,
 				getString(Grade.G3.getStringResID()),
-				AppUtils.getGradeCount(this.mGrades, Grade.G3, ectsWeighting),
+				AppUtils.getGradePercent(this.mGrades, Grade.G3, ectsWeighting),
 				Grade.G3.getColor());
 		AppUtils.addSerieToPieChart(pieChart,
 				getString(Grade.G4.getStringResID()),
-				AppUtils.getGradeCount(this.mGrades, Grade.G4, ectsWeighting),
+				AppUtils.getGradePercent(this.mGrades, Grade.G4, ectsWeighting),
 				Grade.G4.getColor());
 		AppUtils.addSerieToPieChart(pieChart,
 				getString(Grade.G5.getStringResID()),
-				AppUtils.getGradeCount(this.mGrades, Grade.G5, ectsWeighting),
+				AppUtils.getGradePercent(this.mGrades, Grade.G5, ectsWeighting),
 				Grade.G5.getColor());
 
 		if (pieChart.getSeriesSet().size() > 0) {

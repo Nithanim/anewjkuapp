@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.voidsink.anewjkuapp.AppUtils;
+import org.voidsink.anewjkuapp.kusss.LvaState;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.LvaListAdapter;
 import org.voidsink.anewjkuapp.PreferenceWrapper;
 import org.voidsink.anewjkuapp.R;
@@ -116,8 +117,8 @@ public class LvaDetailFragment extends BaseFragment {
 		View view = inflater.inflate(R.layout.fragment_lva_detail, container,
 				false);
 
-		double mDoneEcts = AppUtils.getECTS(mDoneLvas);
-		double mOpenEcts = AppUtils.getECTS(mOpenLvas);
+		double mDoneEcts = AppUtils.getECTS(LvaState.DONE, mDoneLvas);
+		double mOpenEcts = AppUtils.getECTS(LvaState.OPEN, mOpenLvas);
 
 		mExpListView = (ExpandableListView) view
 				.findViewById(R.id.lva_lists);
@@ -160,10 +161,10 @@ public class LvaDetailFragment extends BaseFragment {
 			double rangeStep = Math.ceil((rangeTopMax / 10) / 10) * 10;
 
 			// init bar chart
-			addSerieToBarChart(barChart, getString(R.string.lva_done),
-					mDoneEcts, Color.rgb(0, 220, 0));
-			addSerieToBarChart(barChart, getString(R.string.lva_open),
-					mOpenEcts, Color.rgb(220, 220, 0));
+            addSerieToBarChart(barChart, getContext().getString(LvaState.DONE.getStringResIDExt()),
+                    mDoneEcts, Grade.G1.getColor());
+            addSerieToBarChart(barChart, getContext().getString(LvaState.OPEN.getStringResIDExt()),
+                    mOpenEcts, Grade.G3.getColor());
 
 			barChart.setRangeTopMin(mTerms.size() * 30);
 			barChart.setRangeBoundaries(0, BoundaryMode.FIXED, rangeTopMax,
@@ -193,10 +194,10 @@ public class LvaDetailFragment extends BaseFragment {
 			barChart.setVisibility(View.GONE);
 
 			// init pie chart
-			AppUtils.addSerieToPieChart(pieChart, getString(R.string.lva_done),
-					mDoneEcts, Color.rgb(0, 220, 0));
-			AppUtils.addSerieToPieChart(pieChart, getString(R.string.lva_open),
-					mOpenEcts, Color.rgb(220, 220, 0));
+            addSerieToBarChart(barChart, getContext().getString(LvaState.DONE.getStringResIDExt()),
+                    mDoneEcts, Grade.G1.getColor());
+            addSerieToBarChart(barChart, getContext().getString(LvaState.OPEN.getStringResIDExt()),
+                    mOpenEcts, Grade.G3.getColor());
 
 			if (pieChart.getSeriesSet().size() > 0) {
 				pieChart.setVisibility(View.VISIBLE);
@@ -208,20 +209,20 @@ public class LvaDetailFragment extends BaseFragment {
 		return view;
 	}
 
-	private void addSerieToBarChart(XYPlot barChart, String category,
-			double value, int color) {
-		if (value > 0) {
-			List<Number> values = new ArrayList<Number>();
-			values.add(null); // workaround to center ects bar
-			values.add(value);
-			values.add(null); // workaround to center ects bar
+    private void addSerieToBarChart(XYPlot barChart, String category,
+                                    double value, int color) {
+        if (value > 0) {
+            List<Number> values = new ArrayList<Number>();
+            values.add(null); // workaround to center ects bar
+            values.add(value);
+            values.add(null); // workaround to center ects bar
 
-			SimpleXYSeries mSeries = new SimpleXYSeries(values,
-					SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, category);
-			barChart.addSeries(mSeries,
-					new BarFormatter(color, Color.rgb(0, 80, 0)));
-		}
-	}
+            SimpleXYSeries mSeries = new SimpleXYSeries(values,
+                    SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, category);
+            barChart.addSeries(mSeries,
+                    new BarFormatter(color, Color.GRAY));
+        }
+    }
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

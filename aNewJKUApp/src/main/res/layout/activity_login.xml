@@ -31,6 +31,6 @@
         android:layout_marginTop="10dp"
         android:onClick="submit"
         android:padding="10dp"
-        android:text="@string/sign_in" />
+        android:text="@string/account_login" />
 
 </LinearLayout>

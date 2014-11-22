@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
 import org.voidsink.anewjkuapp.kusss.GradeType;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -243,7 +244,7 @@ public class GradeListAdapter extends BaseExpandableListAdapter implements
 		gradeTypeHolder.type.setText(mContext.getString(gradeType
 				.getStringResID()));
 		double avgGrade = AppUtils.getAvgGrade(
-				getGradesByGroupPosition(groupPosition), false);
+                getGradesByGroupPosition(groupPosition), false, GradeType.ALL, false);
 		gradeTypeHolder.avgGrade.setText(String.format("avg %.2f", avgGrade));
 
 		return convertView;

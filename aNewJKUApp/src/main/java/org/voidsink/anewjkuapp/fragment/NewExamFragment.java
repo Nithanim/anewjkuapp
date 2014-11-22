@@ -3,7 +3,7 @@ package org.voidsink.anewjkuapp.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.voidsink.anewjkuapp.AppUtils;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.ExamListAdapter;
 import org.voidsink.anewjkuapp.ExamListExam;
 import org.voidsink.anewjkuapp.ExamListItem;

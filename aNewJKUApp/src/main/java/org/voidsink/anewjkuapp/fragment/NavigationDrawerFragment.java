@@ -1,5 +1,6 @@
 package org.voidsink.anewjkuapp.fragment;
 
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.accounts.Account;
 import android.app.Activity;
@@ -23,7 +24,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.voidsink.anewjkuapp.AppUtils;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.DrawerAdapter;
 import org.voidsink.anewjkuapp.DrawerItem;
 import org.voidsink.anewjkuapp.DrawerMenuItem;
@@ -73,22 +74,22 @@ public class NavigationDrawerFragment extends BaseFragment {
 
 	private TextView mUser;
 	private static DrawerItem[] mDrawerItems = new DrawerItem[] {
-			new DrawerMenuSection("KUSSS"),
-			new DrawerMenuItem("Termine", CalendarFragment.class),
-			new DrawerMenuItem("Prüfungen", NewExamFragment.class),
-			new DrawerMenuItem("Noten", GradeFragment2.class),
-			new DrawerMenuItem("LVAs", LvaFragment2.class),
-			new DrawerMenuSection("ÖH"),
-			// new DrawerMenuItem("News"),
-			// new DrawerMenuItem("Courier"),
-			new DrawerMenuItem("Info", OehInfoFragment.class),
-			new DrawerMenuItem("Rechte", OehRightsFragment.class),
-			new DrawerMenuSection("Diverses"),
-			new DrawerMenuItem("Mensa", MensaFragment2.class),
+			new DrawerMenuSection(R.string.title_kusss),
+            new DrawerMenuItem(R.string.title_calendar, CalendarFragment.class),
+            new DrawerMenuItem(R.string.title_exams, NewExamFragment.class),
+			new DrawerMenuItem(R.string.title_grades, GradeFragment2.class),
+			new DrawerMenuItem(R.string.title_lvas, LvaFragment2.class),
+            //new DrawerMenuItem(R.string.title_stats, StatFragment.class),
+			new DrawerMenuSection(R.string.title_campus),
+			new DrawerMenuItem(R.string.title_mensa, MensaFragment2.class),
 			// new DrawerMenuSection("Veranstaltungen"),
 			// new DrawerMenuItem("Veranstaltungen"),
-			new DrawerMenuItem("Campus", MapFragment.class),
-			new DrawerMenuItem("About", AboutFragment.class) };
+			new DrawerMenuItem(R.string.title_map, MapFragment.class),
+			new DrawerMenuSection(R.string.title_oeh)/*,
+            new DrawerMenuItem(R.string.title_oeh_news, OehNewsFragment.class),
+            // new DrawerMenuItem("Courier"),
+            new DrawerMenuItem(R.string.title_oeh_info, OehInfoFragment.class),
+            new DrawerMenuItem(R.string.title_oeh_rights, OehRightsFragment.class)*/};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -111,11 +112,11 @@ public class NavigationDrawerFragment extends BaseFragment {
 		selectItem(mCurrentSelectedPosition);
 	}
 
-	public static String getLabel(Class<? extends Fragment> fragmentClass) {
+	public static String getLabel(Context c, Class<? extends Fragment> fragmentClass) {
 		if (fragmentClass != null) {
 			for (DrawerItem item : mDrawerItems) {
 				if (fragmentClass.equals(item.getStartFragment())) {
-					return item.getLabel();
+					return item.getLabel(c);
 				}
 			}
 		}

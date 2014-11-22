@@ -16,7 +16,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
 
-import org.voidsink.anewjkuapp.AppUtils;
+import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.ImportExamTask;
 import org.voidsink.anewjkuapp.PreferenceWrapper;
 import org.voidsink.anewjkuapp.R;
