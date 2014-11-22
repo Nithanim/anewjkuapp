@@ -3,6 +3,7 @@ package org.voidsink.anewjkuapp;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -78,7 +79,12 @@ public class Globals extends Application {
                         Display display = wm.getDefaultDisplay();
 
                         Point size = new Point();
-                        display.getSize(size);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+                            display.getSize(size);
+                        } else {
+                            size.set(display.getWidth(), display.getHeight());
+                        }
 
                         t.setScreenResolution(size.x, size.y);
                     } catch (Exception e) {
