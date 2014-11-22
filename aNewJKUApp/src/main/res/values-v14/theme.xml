@@ -46,12 +46,16 @@
         <item name="android:progressBarStyle">@style/ProgressBar.Apptheme</item>
         <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
         <item name="android:icon">@android:color/transparent</item>
+        <!-- Support library compatibility -->
+        <item name="background">@color/primary</item>
     </style>
 
     <style name="ActionBar.Transparent.Apptheme" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@drawable/ab_transparent_apptheme</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Apptheme</item>
         <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
+        <!-- Support library compatibility -->
+        <item name="background">@drawable/ab_transparent_apptheme</item>
     </style>
 
     <style name="DropDownListView.Apptheme" parent="@style/Widget.AppCompat.ListView.DropDown">
