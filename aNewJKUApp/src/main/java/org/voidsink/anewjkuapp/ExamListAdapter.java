@@ -2,9 +2,9 @@ package org.voidsink.anewjkuapp;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-import org.voidsink.anewjkuapp.R;
-import org.voidsink.anewjkuapp.base.BaseArrayAdapter;
+import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
 import org.voidsink.anewjkuapp.calendar.CalendarUtils;
 
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class ExamListAdapter extends BaseArrayAdapter<ExamListItem> {
+public class ExamListAdapter extends StickyArrayAdapter<ExamListItem> {
 
 	private static final DateFormat df = SimpleDateFormat.getDateInstance();
 
@@ -60,14 +60,12 @@ public class ExamListAdapter extends BaseArrayAdapter<ExamListItem> {
 					.findViewById(R.id.exam_list_item_term);
 			eventItemHolder.skz = (TextView) convertView
 					.findViewById(R.id.exam_list_item_skz);
-			eventItemHolder.date = (TextView) convertView
-					.findViewById(R.id.exam_list_item_date);
 			eventItemHolder.time = (TextView) convertView
 					.findViewById(R.id.exam_list_item_time);
 			eventItemHolder.location = (TextView) convertView
 					.findViewById(R.id.exam_list_item_location);
 			eventItemHolder.chip = (View) convertView
-					.findViewById(R.id.exam_list_item_chip);
+					.findViewById(R.id.empty_chip_background);
 
 			convertView.setTag(eventItemHolder);
 		}
@@ -100,7 +98,6 @@ public class ExamListAdapter extends BaseArrayAdapter<ExamListItem> {
 		eventItemHolder.lvaNr.setText(eventItem.getLvaNr());
 		eventItemHolder.term.setText(eventItem.getTerm());
 		eventItemHolder.skz.setText(String.format("[%s]", eventItem.getSkz()));
-		eventItemHolder.date.setText(df.format(eventItem.getDate()));
 		eventItemHolder.time.setText(eventItem.getTime());
 		eventItemHolder.location.setText(eventItem.getLocation());
 
@@ -129,9 +126,39 @@ public class ExamListAdapter extends BaseArrayAdapter<ExamListItem> {
 		public TextView info;
 		public TextView description;
 		public TextView time;
-		public TextView date;
 		private TextView title;
 		private TextView lvaNr;
 		private TextView skz;
 	}
+
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup viewGroup) {
+        // Build your custom HeaderView
+        LayoutInflater mInflater = LayoutInflater.from(getContext());
+        final View headerView = mInflater.inflate(R.layout.list_header, null);
+        final TextView tvHeaderTitle = (TextView) headerView.findViewById(R.id.list_header_text);
+
+        ExamListItem card = getItem(position);
+        if (card instanceof ExamListExam) {
+            tvHeaderTitle.setText(DateFormat.getDateInstance().format(((ExamListExam) card).getDate()));
+        }
+
+        return headerView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        ExamListItem card = getItem(position);
+        if (card instanceof ExamListExam) {
+
+            Calendar cal = Calendar.getInstance(); // locale-specific
+            cal.setTimeInMillis(((ExamListExam) card).getDate().getTime());
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTimeInMillis();
+        }
+        return 0;
+    }
 }

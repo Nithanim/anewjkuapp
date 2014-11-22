@@ -76,7 +76,7 @@ public class NavigationDrawerFragment extends BaseFragment {
 	private static DrawerItem[] mDrawerItems = new DrawerItem[] {
 			new DrawerMenuSection(R.string.title_kusss),
             new DrawerMenuItem(R.string.title_calendar, CalendarFragment.class),
-            new DrawerMenuItem(R.string.title_exams, NewExamFragment.class),
+            new DrawerMenuItem(R.string.title_exams, ExamFragment.class),
 			new DrawerMenuItem(R.string.title_grades, GradeFragment2.class),
 			new DrawerMenuItem(R.string.title_lvas, LvaFragment2.class),
             //new DrawerMenuItem(R.string.title_stats, StatFragment.class),

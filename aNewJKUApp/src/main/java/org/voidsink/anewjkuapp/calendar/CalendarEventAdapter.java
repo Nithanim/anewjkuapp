@@ -47,8 +47,6 @@ public class CalendarEventAdapter extends StickyArrayAdapter<CalendarListItem> {
 			convertView = inflater.inflate(R.layout.calendar_list_item, parent,
 					false);
 			eventItemHolder = new CalendarListEventHolder();
-			eventItemHolder.chip = convertView
-					.findViewById(R.id.calendar_list_item_chip);
 			eventItemHolder.title = (TextView) convertView
 					.findViewById(R.id.calendar_list_item_title);
 			eventItemHolder.descr = (TextView) convertView
@@ -65,7 +63,6 @@ public class CalendarEventAdapter extends StickyArrayAdapter<CalendarListItem> {
 			eventItemHolder = (CalendarListEventHolder) convertView.getTag();
 		}
 
-		eventItemHolder.chip.setBackgroundColor(eventItem.getColor());
 		eventItemHolder.title.setText(eventItem.getTitle());
 
 		if (eventItem.getDescr().isEmpty()) {
@@ -163,7 +160,6 @@ public class CalendarEventAdapter extends StickyArrayAdapter<CalendarListItem> {
     private static class CalendarListEventHolder {
 		private TextView title;
 		private TextView descr;
-		private View chip;
 		private TextView time;
 		private TextView location;
 	}
