@@ -153,6 +153,8 @@ public final class PreferenceWrapper {
     }
 
     public static boolean getUseLightDesign(Context mContext) {
+        return false;
+        /*
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(mContext);
         try {
@@ -162,6 +164,7 @@ public final class PreferenceWrapper {
             Log.e(TAG, "Failure", e);
             return PREF_USE_LIGHT_THEME_DEFAULT;
         }
+        */
     }
 
     public static File getMapFile(Context mContext) {
