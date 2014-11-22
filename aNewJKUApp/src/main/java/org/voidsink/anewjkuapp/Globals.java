@@ -78,15 +78,7 @@ public class Globals extends Application {
                         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                         Display display = wm.getDefaultDisplay();
 
-                        Point size = new Point();
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                            display.getSize(size);
-                        } else {
-                            size.set(display.getWidth(), display.getHeight());
-                        }
-
-                        t.setScreenResolution(size.x, size.y);
+                        t.setScreenResolution(display.getWidth(), display.getHeight());
                     } catch (Exception e) {
                         Log.e(TAG, "get sceen size", e);
                     }
