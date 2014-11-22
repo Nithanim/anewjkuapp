@@ -1,6 +1,5 @@
 package org.voidsink.anewjkuapp.kusss;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.voidsink.anewjkuapp.utils.Analytics;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.CookieHandler;
@@ -45,9 +45,6 @@ public class KusssHandler {
             + PATTERN_LVA_NR + "," + PATTERN_TERM + "\\)";
     public static final String PATTERN_LVA_NR_SLASH_TERM = "\\("
             + PATTERN_LVA_NR + "\\/" + PATTERN_TERM + "\\)";
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat df = new SimpleDateFormat(
-            "dd.MM.yyyy");
     private static final String TAG = KusssHandler.class.getSimpleName();
     private static final String URL_MY_LVAS = "https://www.kusss.jku.at/kusss/assignment-results.action";
     private static final String URL_GET_TERMS = "https://www.kusss.jku.at/kusss/listmystudentlvas.action";
@@ -99,19 +96,23 @@ public class KusssHandler {
     }
 
     public synchronized String login(Context c, String user, String password) {
-        if (user == null || password == null) {return null;}
+        if (user == null || password == null) {
+            return null;
+        }
         try {
             if ((user.length() > 0) && (user.charAt(0) != 'k')) {
                 user = "k" + user;
             }
-            Connection.Response r = Jsoup.connect(URL_LOGIN).data("j_username", user)
-                    .data("j_password", password).method(Connection.Method.POST).execute();
 
-            if (r != null) {
-                Log.d(TAG, String.format("%d: %s", r.statusCode(), r.statusMessage()));
-                if (isLoggedIn(c, getSessionIDFromCookie())) {
-                    return getSessionIDFromCookie();
-                }
+            Document doc = Jsoup.connect(URL_LOGIN).data("j_username", user)
+                    .data("j_password", password).post();
+
+            //TODO: check document for successful login message
+
+            String sessionId = getSessionIDFromCookie();
+
+            if (isLoggedIn(c, sessionId)) {
+                return sessionId;
             }
             return null;
         } catch (Exception e) {
@@ -198,7 +199,11 @@ public class KusssHandler {
             writeParams(conn, new String[]{"selectAll"},
                     new String[]{"ical.category.mycourses"});
 
-            iCal = mCalendarBuilder.build(conn.getInputStream());
+            BufferedInputStream in = new BufferedInputStream(conn.getInputStream());
+
+            iCal = mCalendarBuilder.build(in);
+
+            conn.disconnect();
         } catch (Exception e) {
             Log.e(TAG, "getLVAIcal", e);
             Analytics.sendException(c, e, true);
@@ -219,7 +224,11 @@ public class KusssHandler {
             writeParams(conn, new String[]{"selectAll"},
                     new String[]{"ical.category.examregs"});
 
-            iCal = mCalendarBuilder.build(conn.getInputStream());
+            BufferedInputStream in = new BufferedInputStream(conn.getInputStream());
+
+            iCal = mCalendarBuilder.build(in);
+
+            conn.disconnect();
         } catch (Exception e) {
             Log.e(TAG, "getExamIcal", e);
             Analytics.sendException(c, e, true);
@@ -230,7 +239,7 @@ public class KusssHandler {
     }
 
     public Map<String, String> getTerms(Context c) {
-        Map<String, String> terms = new HashMap<String, String>();
+        Map<String, String> terms = new HashMap<>();
         try {
             Document doc = Jsoup.connect(URL_GET_TERMS).get();
             Element termDropdown = doc.getElementById("term");
@@ -249,27 +258,23 @@ public class KusssHandler {
         return terms;
     }
 
-    public boolean selectTerm(Context c, String term) {
-        try {
-            Connection.Response r = Jsoup.connect(URL_SELECT_TERM).method(Connection.Method.POST)
-                    .data("term", term)
-                    .data("previousQueryString", "")
-                    .data("reloadAction", "").execute();
+    public boolean selectTerm(Context c, String term) throws IOException{
+        Document doc = Jsoup.connect(URL_SELECT_TERM)
+                .data("term", term)
+                .data("previousQueryString", "")
+                .data("reloadAction", "coursecatalogue-start.action").post();
 
-            if (r == null) {return false;}
-
-        } catch (IOException e) {
-            Log.e(TAG, "selectTerm", e);
-            Analytics.sendException(c, e, false);
-            return false;
-        }
-        Log.d(TAG, term + " selected");
+        //TODO: check document for successful selection of term
+//            if (!isSelected(doc, term)) {
+//                throw new IOException(String.format("selection of term failed: %s", term));
+//            }
         return true;
     }
 
     public List<Lva> getLvas(Context c) {
-        List<Lva> lvas = new ArrayList<Lva>();
+        List<Lva> lvas = new ArrayList<>();
         try {
+            Log.d(TAG, "getLvas");
             Map<String, String> termsHelper = getTerms(c);
             if (termsHelper != null) {
                 List<String> terms = new ArrayList<>(termsHelper.keySet());
@@ -287,7 +292,13 @@ public class KusssHandler {
                                     lvas.add(lva);
                                 }
                             }
+                        } else {
+                            // break if selection is not equal previously selected term
+                            throw new IOException(String.format("term not selected: %s", term));
                         }
+                    } else {
+                        // break if selection failed
+                        throw new IOException(String.format("cannot select term: %s", term));
                     }
                 }
             }
@@ -317,7 +328,7 @@ public class KusssHandler {
     }
 
     public List<ExamGrade> getGrades(Context c) {
-        List<ExamGrade> grades = new ArrayList<ExamGrade>();
+        List<ExamGrade> grades = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(URL_MY_GRADES).data("months", "0")
                     .get();
@@ -349,7 +360,7 @@ public class KusssHandler {
     }
 
     public List<Exam> getNewExams(Context c) {
-        List<Exam> exams = new ArrayList<Exam>();
+        List<Exam> exams = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(URL_GET_NEW_EXAMS)
                     .data("search", "true").data("searchType", "mylvas").get();
@@ -383,11 +394,10 @@ public class KusssHandler {
         return exams;
     }
 
-    @SuppressLint("UseSparseArrays")
     public List<Exam> getNewExamsByLvaNr(Context c, List<Lva> lvas)
             throws IOException {
 
-        List<Exam> exams = new ArrayList<Exam>();
+        List<Exam> exams = new ArrayList<>();
         try {
             if (lvas == null || lvas.size() == 0) {
                 Log.d(TAG, "no lvas found, reload");
@@ -396,7 +406,7 @@ public class KusssHandler {
             if (lvas != null && lvas.size() > 0) {
                 List<ExamGrade> grades = getGrades(c);
 
-                Map<String, ExamGrade> gradeCache = new HashMap<String, ExamGrade>();
+                Map<String, ExamGrade> gradeCache = new HashMap<>();
                 for (ExamGrade grade : grades) {
                     if (!grade.getLvaNr().isEmpty()) {
                         ExamGrade existing = gradeCache.get(grade.getLvaNr());
@@ -446,8 +456,10 @@ public class KusssHandler {
     }
 
     private List<Exam> getNewExamsByLvaNr(Context c, String lvaNr) {
-        List<Exam> exams = new ArrayList<Exam>();
+        List<Exam> exams = new ArrayList<>();
         try {
+            final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+
             Log.d(TAG, "getNewExamsByLvaNr: " + lvaNr);
             Document doc = Jsoup
                     .connect(URL_GET_NEW_EXAMS)
