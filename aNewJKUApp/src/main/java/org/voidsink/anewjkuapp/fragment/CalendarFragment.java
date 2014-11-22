@@ -1,21 +1,5 @@
 package org.voidsink.anewjkuapp.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.voidsink.anewjkuapp.utils.Analytics;
-import org.voidsink.anewjkuapp.utils.AppUtils;
-import org.voidsink.anewjkuapp.ImportCalendarTask;
-import org.voidsink.anewjkuapp.R;
-import org.voidsink.anewjkuapp.base.BaseFragment;
-import org.voidsink.anewjkuapp.calendar.CalendarContractWrapper;
-import org.voidsink.anewjkuapp.calendar.CalendarEventAdapter;
-import org.voidsink.anewjkuapp.calendar.CalendarListEvent;
-import org.voidsink.anewjkuapp.calendar.CalendarListItem;
-import org.voidsink.anewjkuapp.calendar.CalendarUtils;
-
 import android.accounts.Account;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -25,6 +9,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,223 +18,246 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
+
+import org.voidsink.anewjkuapp.ImportCalendarTask;
+import org.voidsink.anewjkuapp.R;
+import org.voidsink.anewjkuapp.base.BaseFragment;
+import org.voidsink.anewjkuapp.calendar.CalendarContractWrapper;
+import org.voidsink.anewjkuapp.calendar.CalendarEventAdapter;
+import org.voidsink.anewjkuapp.calendar.CalendarListEvent;
+import org.voidsink.anewjkuapp.calendar.CalendarListItem;
+import org.voidsink.anewjkuapp.calendar.CalendarUtils;
+import org.voidsink.anewjkuapp.utils.Analytics;
+import org.voidsink.anewjkuapp.utils.AppUtils;
+import org.voidsink.anewjkuapp.utils.Consts;
+import org.voidsink.anewjkuapp.view.StickyListView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CalendarFragment extends BaseFragment {
 
-	private static final String TAG = CalendarFragment.class.getSimpleName();
+    private static final String TAG = CalendarFragment.class.getSimpleName();
+    long now = 0, then = 0;
+    private CalendarEventAdapter mAdapter;
+    private ContentObserver mCalendarObserver;
 
-	private ListView mListView;
-	private CalendarEventAdapter mAdapter;
-	private ContentObserver mCalendarObserver;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_card_calendar, container,
+                false);
 
-	long now = 0, then = 0;
+        final StickyListView mListView = (StickyListView) view.findViewById(R.id.calendar_card_events);
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_calendar, container,
-				false);
-		
-		mListView = (ListView) view.findViewById(R.id.calendar_events);
+        Button loadMore = (Button) view.findViewById(R.id.calendar_card_load);
 
-		Button loadMore = (Button) inflater.inflate(R.layout.listview_footer,
-				mListView, false);
+        loadMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadMoreData();
+            }
+        });
+        loadMore.setClickable(true);
 
-		loadMore.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				loadMoreData();
-			}
-		});
-		loadMore.setClickable(true);
+        mAdapter = new CalendarEventAdapter(getContext());
 
-		mAdapter = new CalendarEventAdapter(getContext());
+//		mListView.addFooterView(loadMore);
+        mListView.setAdapter(mAdapter);
 
-		mListView.addFooterView(loadMore);
-		mListView.setAdapter(mAdapter);
+        return view;
+    }
 
-		return view;
-	}
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+        loadData();
+    }
 
-		// init range
-		now = System.currentTimeMillis();
-		then = now + 14 * DateUtils.DAY_IN_MILLIS;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		loadData();
-	}
+        // init range
+        now = System.currentTimeMillis();
+        then = now + 14 * DateUtils.DAY_IN_MILLIS;
+    }
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.calendar, menu);
-	}
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.calendar, menu);
+    }
 
-	private void loadMoreData() {
-		then += 31 * DateUtils.DAY_IN_MILLIS;
-		
-		Analytics.eventLoadMoreEvents(getContext(), then - now);
-		
-		loadData();
-	}
+    private void loadMoreData() {
+        then += 31 * DateUtils.DAY_IN_MILLIS;
 
-	private void loadData() {
-		Log.d(TAG, "loadData");
-		new CalendarLoadTask().execute();
-	}
+        Analytics.eventLoadMoreEvents(getContext(), then - now);
 
-	@Override
-	public void onStart() {
-		super.onStart();
+        loadData();
+    }
 
-		mCalendarObserver = new CalendarContentObserver(new Handler());
-		getActivity().getContentResolver().registerContentObserver(
-				CalendarContractWrapper.Events.CONTENT_URI().buildUpon()
-						.appendPath("#").build(), false, mCalendarObserver);
-	}
+    private void loadData() {
+        Log.d(TAG, "loadData");
+        new CalendarLoadTask().execute();
+    }
 
-	@Override
-	public void onStop() {
-		getActivity().getContentResolver().unregisterContentObserver(
-				mCalendarObserver);
+    @Override
+    public void onStart() {
+        super.onStart();
 
-		super.onStop();
-	}
+        mCalendarObserver = new CalendarContentObserver(new Handler());
+        getActivity().getContentResolver().registerContentObserver(
+                CalendarContractWrapper.Events.CONTENT_URI().buildUpon()
+                        .appendPath("#").build(), false, mCalendarObserver);
+    }
 
-	private class CalendarLoadTask extends AsyncTask<String, Void, Void> {
-		private ProgressDialog progressDialog;
-		private List<CalendarListItem> mEvents;
-		private Map<String, Integer> mColors;
-		private Context mContext;
+    @Override
+    public void onStop() {
+        getActivity().getContentResolver().unregisterContentObserver(
+                mCalendarObserver);
 
-		@Override
-		protected Void doInBackground(String... urls) {
-			mEvents = new ArrayList<CalendarListItem>();
+        super.onStop();
+    }
 
-			// fetch calendar colors
-			this.mColors = new HashMap<String, Integer>();
-			ContentResolver cr = mContext.getContentResolver();
-			Cursor c = cr
-					.query(CalendarContractWrapper.Calendars.CONTENT_URI(),
-							new String[] {
-									CalendarContractWrapper.Calendars._ID(),
-									CalendarContractWrapper.Calendars
-											.CALENDAR_COLOR() }, null, null,
-							null);
-			while (c.moveToNext()) {
-				this.mColors.put(c.getString(0), c.getInt(1));
-			}
-			c.close();
+    @Override
+    protected String getScreenName() {
+        return Consts.SCREEN_CALENDAR;
+    }
 
-			Account mAccount = AppUtils.getAccount(mContext);
-			if (mAccount != null) {
-				String calIDLva = CalendarUtils.getCalIDByName(mContext,
-						mAccount, CalendarUtils.ARG_CALENDAR_LVA);
-				String calIDExam = CalendarUtils.getCalIDByName(mContext,
-						mAccount, CalendarUtils.ARG_CALENDAR_EXAM);
+    private class CalendarLoadTask extends AsyncTask<String, Void, Void> {
+        private ProgressDialog progressDialog;
+        private List<CalendarListItem> mEvents;
+        private Context mContext;
 
-				if (calIDLva == null || calIDExam == null) {
-					Log.w(TAG, "no events loaded, calendars not found");
-					return null;
-				}
-				
-				// load events
-				boolean eventsFound = false;
-				cr = mContext.getContentResolver();
-				do {
-				c = cr.query(
-						CalendarContractWrapper.Events.CONTENT_URI(),
-						ImportCalendarTask.EVENT_PROJECTION,
-							"("
-									+ CalendarContractWrapper.Events
-											.CALENDAR_ID()
-								+ " = ? or "
-									+ CalendarContractWrapper.Events
-											.CALENDAR_ID() + " = ? ) and "
-								+ CalendarContractWrapper.Events.DTEND()
-								+ " >= ? and "
-								+ CalendarContractWrapper.Events.DTSTART()
-								+ " <= ? and "
-								+ CalendarContractWrapper.Events.DELETED()
-									+ " != 1",
-							new String[] { calIDExam, calIDLva,
-								Long.toString(now), Long.toString(then) },
-						CalendarContractWrapper.Events.DTSTART() + " ASC");
+        @Override
+        protected Void doInBackground(String... urls) {
+            // fetch calendar colors
+            final Map<String, Integer> mColors = new HashMap<>();
+            ContentResolver cr = mContext.getContentResolver();
+            Cursor c = cr
+                    .query(CalendarContractWrapper.Calendars.CONTENT_URI(),
+                            new String[]{
+                                    CalendarContractWrapper.Calendars._ID(),
+                                    CalendarContractWrapper.Calendars
+                                            .CALENDAR_COLOR()}, null, null,
+                            null);
+            while (c.moveToNext()) {
+                mColors.put(c.getString(0), c.getInt(1));
+            }
+            c.close();
 
-				if (c != null) {
-						// check if c is empty
-						eventsFound = c.moveToNext(); 
-						if (!eventsFound) {
-							// if empty then increase "then" for max 1 year
-							if (then - now < DateUtils.YEAR_IN_MILLIS) {
-								then += 31 * DateUtils.DAY_IN_MILLIS;
-							} else {
-								eventsFound = true;
-							}
-						}
-						// restore cursor position
-						c.moveToPrevious();
-						if (!eventsFound) {
-							// close cursor before loading next events
-							c.close();
-						}
-					}
-				} while (c != null && !eventsFound);
-				if (c != null && !c.isClosed()) {
-					while (c.moveToNext()) {
-						mEvents.add(new CalendarListEvent(
-								mColors.get(c
-										.getString(ImportCalendarTask.COLUMN_EVENT_CAL_ID)),
-								c.getString(ImportCalendarTask.COLUMN_EVENT_TITLE),
-								c.getString(ImportCalendarTask.COLUMN_EVENT_DESCRIPTION),
-								c.getString(ImportCalendarTask.COLUMN_EVENT_LOCATION),
-								c.getLong(ImportCalendarTask.COLUMN_EVENT_DTSTART),
-								c.getLong(ImportCalendarTask.COLUMN_EVENT_DTEND)));
+            Account mAccount = AppUtils.getAccount(mContext);
+            if (mAccount != null) {
+                String calIDLva = CalendarUtils.getCalIDByName(mContext,
+                        mAccount, CalendarUtils.ARG_CALENDAR_LVA);
+                String calIDExam = CalendarUtils.getCalIDByName(mContext,
+                        mAccount, CalendarUtils.ARG_CALENDAR_EXAM);
 
-					}
-					c.close();
-				}
-			}
-			return null;
-		}
+                if (calIDLva == null || calIDExam == null) {
+                    Log.w(TAG, "no events loaded, calendars not found");
+                    return null;
+                }
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			mContext = CalendarFragment.this.getContext();
-			if (mContext == null) {
-				Log.e(TAG, "context is null");
-			}
+                // load events
+                boolean eventsFound = false;
+                cr = mContext.getContentResolver();
+                do {
+                    c = cr.query(
+                            CalendarContractWrapper.Events.CONTENT_URI(),
+                            ImportCalendarTask.EVENT_PROJECTION,
+                            "("
+                                    + CalendarContractWrapper.Events
+                                    .CALENDAR_ID()
+                                    + " = ? or "
+                                    + CalendarContractWrapper.Events
+                                    .CALENDAR_ID() + " = ? ) and "
+                                    + CalendarContractWrapper.Events.DTEND()
+                                    + " >= ? and "
+                                    + CalendarContractWrapper.Events.DTSTART()
+                                    + " <= ? and "
+                                    + CalendarContractWrapper.Events.DELETED()
+                                    + " != 1",
+                            new String[]{calIDExam, calIDLva,
+                                    Long.toString(now), Long.toString(then)},
+                            CalendarContractWrapper.Events.DTSTART() + " ASC");
 
-			progressDialog = ProgressDialog.show(mContext,
-					mContext.getString(R.string.progress_title),
-					mContext.getString(R.string.progress_load_calendar), true);
-		}
+                    if (c != null) {
+                        // check if c is empty
+                        eventsFound = c.moveToNext();
+                        if (!eventsFound) {
+                            // if empty then increase "then" for max 1 year
+                            if (then - now < DateUtils.YEAR_IN_MILLIS) {
+                                then += 31 * DateUtils.DAY_IN_MILLIS;
+                            } else {
+                                eventsFound = true;
+                            }
+                        }
+                        // restore cursor position
+                        c.moveToPrevious();
+                        if (!eventsFound) {
+                            // close cursor before loading next events
+                            c.close();
+                        }
+                    }
+                } while (c != null && !eventsFound);
+                if (c != null && !c.isClosed()) {
+                    while (c.moveToNext()) {
+                        mEvents.add(new CalendarListEvent(
+                                c.getLong(ImportCalendarTask.COLUMN_EVENT_ID),
+                                mColors.get(c
+                                        .getString(ImportCalendarTask.COLUMN_EVENT_CAL_ID)),
+                                c.getString(ImportCalendarTask.COLUMN_EVENT_TITLE),
+                                c.getString(ImportCalendarTask.COLUMN_EVENT_DESCRIPTION),
+                                c.getString(ImportCalendarTask.COLUMN_EVENT_LOCATION),
+                                c.getLong(ImportCalendarTask.COLUMN_EVENT_DTSTART),
+                                c.getLong(ImportCalendarTask.COLUMN_EVENT_DTEND)));
+                    }
+                    c.close();
+                }
+            }
+            return null;
+        }
 
-		@Override
-		protected void onPostExecute(Void result) {
-			mAdapter.clear();
-			mAdapter.addAll(CalendarEventAdapter.insertSections(mEvents));
-			progressDialog.dismiss();
-			super.onPostExecute(result);
-		}
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-	}
+            mContext = CalendarFragment.this.getContext();
+            if (mContext == null) {
+                Log.e(TAG, "context is null");
+            }
+            mEvents = new ArrayList<>();
+            progressDialog = ProgressDialog.show(mContext,
+                    mContext.getString(R.string.progress_title),
+                    mContext.getString(R.string.progress_load_calendar), true);
+        }
 
-	private class CalendarContentObserver extends ContentObserver {
+        @Override
+        protected void onPostExecute(Void result) {
+            mAdapter.clear();
+            mAdapter.addAll(mEvents);
+            mAdapter.notifyDataSetChanged();
 
-		public CalendarContentObserver(Handler handler) {
-			super(handler);
-		}
+            progressDialog.dismiss();
 
-		@Override
-		public void onChange(boolean selfChange) {
-			super.onChange(selfChange);
-			loadData();
-		}
-	}
+            super.onPostExecute(result);
+        }
+    }
+
+    private class CalendarContentObserver extends ContentObserver {
+
+        public CalendarContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            loadData();
+        }
+    }
 }

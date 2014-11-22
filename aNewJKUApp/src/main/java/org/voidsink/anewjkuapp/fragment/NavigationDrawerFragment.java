@@ -81,7 +81,7 @@ public class NavigationDrawerFragment extends BaseFragment {
 			new DrawerMenuItem(R.string.title_lvas, LvaFragment2.class),
             //new DrawerMenuItem(R.string.title_stats, StatFragment.class),
 			new DrawerMenuSection(R.string.title_campus),
-			new DrawerMenuItem(R.string.title_mensa, MensaFragment2.class),
+			new DrawerMenuItem(R.string.title_mensa, MensaFragment.class),
 			// new DrawerMenuSection("Veranstaltungen"),
 			// new DrawerMenuItem("Veranstaltungen"),
 			new DrawerMenuItem(R.string.title_map, MapFragment.class),

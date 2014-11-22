@@ -8,7 +8,8 @@ import org.apache.commons.lang.time.DateUtils;
 
 public class CalendarListEvent implements CalendarListItem {
 
-	private int mColor;
+    private final long mEventId;
+    private int mColor;
 	private String mTitle;
 	private String mDescr;
 	private String mTime;
@@ -16,9 +17,10 @@ public class CalendarListEvent implements CalendarListItem {
 	private long mDtStart;
 	private long mDtEnd;
 	
-	public CalendarListEvent(int color, String title, String descr,
+	public CalendarListEvent(long eventId, int color, String title, String descr,
 			String location, long dtStart, long dtEnd) {
-		this.mColor = color;
+		this.mEventId = eventId;
+        this.mColor = color;
 		this.mTitle = title;
 		this.mDescr = descr;
 		this.mLocation = location;

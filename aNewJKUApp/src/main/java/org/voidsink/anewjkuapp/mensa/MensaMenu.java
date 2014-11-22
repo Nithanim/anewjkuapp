@@ -12,8 +12,9 @@ public class MensaMenu implements MensaItem {
 	private double price;
 	private double priceBig;
 	private double oehBonus;
+    private MensaDay day;
 
-	public MensaMenu(JSONObject jsonObject) {
+    public MensaMenu(JSONObject jsonObject) {
 		try {
 			this.name = jsonObject.getString("name").trim();
 			if (jsonObject.isNull("soup")) {
@@ -58,5 +59,13 @@ public class MensaMenu implements MensaItem {
     @Override
     public int getType() {
         return TYPE_MENU;
+    }
+
+    public void setDay(MensaDay day) {
+        this.day = day;
+    }
+
+    public MensaDay getDay() {
+        return day;
     }
 }

@@ -1,81 +1,110 @@
 package org.voidsink.anewjkuapp.fragment;
 
-import org.voidsink.anewjkuapp.MensaMenuAdapter;
-import org.voidsink.anewjkuapp.R;
-import org.voidsink.anewjkuapp.base.BaseFragment;
-import org.voidsink.anewjkuapp.mensa.Mensa;
-import org.voidsink.anewjkuapp.mensa.MenuLoader;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+
+import org.voidsink.anewjkuapp.MensaItem;
+import org.voidsink.anewjkuapp.MensaMenuAdapter;
+import org.voidsink.anewjkuapp.R;
+import org.voidsink.anewjkuapp.base.BaseFragment;
+import org.voidsink.anewjkuapp.mensa.Mensa;
+import org.voidsink.anewjkuapp.mensa.MensaDay;
+import org.voidsink.anewjkuapp.mensa.MensaMenu;
+import org.voidsink.anewjkuapp.mensa.MenuLoader;
+import org.voidsink.anewjkuapp.view.StickyListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MensaFragmentDetail extends BaseFragment {
 
-	public static final String TAG = MensaFragmentDetail.class.getSimpleName();
-	private ListView mListView;
-	private MensaMenuAdapter mAdapter;
+    public static final String TAG = MensaFragmentDetail.class.getSimpleName();
+    private MensaMenuAdapter mAdapter;
+    private StickyListView mListView;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_mensa_detail, container,
-				false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_card_menu, container,
+                false);
 
-		mListView = (ListView) view.findViewById(R.id.menu_list);
-		mAdapter = new MensaMenuAdapter(getContext(),
-				android.R.layout.simple_list_item_1);
-		mListView.setAdapter(mAdapter);
+        mListView = (StickyListView) view.findViewById(R.id.menu_card_list);
+        mAdapter = new MensaMenuAdapter(getContext(), android.R.layout.simple_list_item_1, true);
+        mListView.setAdapter(mAdapter);
 
-		new MenuLoadTask().execute();
+        return view;
+    }
 
-		return view;
-	}
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-	private class MenuLoadTask extends AsyncTask<String, Void, Void> {
-		private Mensa mensa;
-		private Context mContext;
+        new MenuLoadTask().execute();
+    }
 
-		@Override
-		protected Void doInBackground(String... urls) {
-			mensa = createLoader().getMensa(mContext);
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
-			return null;
-		}
+    protected abstract MenuLoader createLoader();
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			mContext = MensaFragmentDetail.this.getContext();
-			if (mContext == null) {
-				Log.e(TAG, "context is null");
-			}
-			mAdapter.clear();
-			mAdapter.addInfo(mContext.getString(R.string.progress_title),
-					mContext.getString(R.string.progress_load_menu));
-			mAdapter.notifyDataSetChanged();
-		}
+    private class MenuLoadTask extends AsyncTask<String, Void, Void> {
+        private List<MensaItem> mMenus;
+        private Context mContext;
+        private int mSelectPosition;
 
-		@Override
-		protected void onPostExecute(Void result) {
-			mAdapter.clear();
-			mAdapter.addMensa(mensa);
-			mAdapter.notifyDataSetChanged();
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mContext = MensaFragmentDetail.this.getContext();
+            if (mContext == null) {
+                Log.e(TAG, "context is null");
+            }
+            mMenus = new ArrayList<>();
+            mSelectPosition = -1;
+        }
 
-			super.onPostExecute(result);
-		}
-	}
+        @Override
+        protected Void doInBackground(String... urls) {
+            final Mensa mensa = createLoader().getMensa(mContext);
 
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
+            if (mensa != null) {
+                for (MensaDay day : mensa.getDays()) {
+                    for (MensaMenu menu : day.getMenus()) {
+                        mMenus.add(menu);
+                        // remember position of menu for today for scrolling to item after update
+                        if (mSelectPosition == -1 &&
+                                DateUtils.isToday(day.getDate().getTime())) {
+                            mSelectPosition = mMenus.size() - 1;
+                        }
+                    }
+                }
+            }
 
-	protected abstract MenuLoader createLoader();
+            return null;
+        }
 
+        @Override
+        protected void onPostExecute(Void result) {
+            mAdapter.clear();
+            mAdapter.addAll(mMenus);
+            mAdapter.notifyDataSetChanged();
+
+            // scroll to today's menu
+            if (mSelectPosition >= 0 &&
+                    mListView != null) {
+                mListView.smoothScrollToPosition(mSelectPosition);
+            }
+
+            super.onPostExecute(result);
+        }
+    }
 }

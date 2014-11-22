@@ -8,8 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
+import org.voidsink.anewjkuapp.MensaItem;
 import org.voidsink.anewjkuapp.MensaMenuAdapter;
 import org.voidsink.anewjkuapp.R;
 import org.voidsink.anewjkuapp.base.BaseFragment;
@@ -21,6 +21,7 @@ import org.voidsink.anewjkuapp.mensa.MensaDay;
 import org.voidsink.anewjkuapp.mensa.MensaMenu;
 import org.voidsink.anewjkuapp.mensa.MenuLoader;
 import org.voidsink.anewjkuapp.mensa.RaabMenuLoader;
+import org.voidsink.anewjkuapp.view.StickyListView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +35,6 @@ public class MensaDayFragment extends BaseFragment {
     public static final String TAG = MensaDayFragment.class.getSimpleName();
     private static final List<Mensa> mMensen = new ArrayList<>();
     private Date mDate;
-    private ListView mListView;
     private MensaMenuAdapter mAdapter;
 
     public MensaDayFragment() {
@@ -46,12 +46,11 @@ public class MensaDayFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mensa_detail, container,
+        View view = inflater.inflate(R.layout.fragment_card_menu, container,
                 false);
 
-        mListView = (ListView) view.findViewById(R.id.menu_list);
-        mAdapter = new MensaMenuAdapter(getContext(),
-                android.R.layout.simple_list_item_1);
+        final StickyListView mListView = (StickyListView) view.findViewById(R.id.menu_card_list);
+        mAdapter = new MensaMenuAdapter(getContext(), android.R.layout.simple_list_item_1, false);
         mListView.setAdapter(mAdapter);
 
         return view;
@@ -117,8 +116,7 @@ public class MensaDayFragment extends BaseFragment {
         protected void onPostExecute(Void result) {
             setMensa(mMensa, mIndex);
 
-            /*
-            List<Card> menus = new ArrayList<Card>();
+            List<MensaItem> menus = new ArrayList<>();
             int noMenuCount = 0;
 
             for (Mensa mensa : mMensen) {
@@ -126,11 +124,11 @@ public class MensaDayFragment extends BaseFragment {
                     MensaDay day = mensa.getDay(mDate);
                     if (day != null && !day.isEmpty()) {
                         for (MensaMenu menu : day.getMenus()) {
-                            menus.add(new MenuCard(mContext, mensa, day, menu));
+                            menus.add(menu);
                         }
                     } else {
                         // add no menu card
-                        menus.add(new NoMenuCard(mContext, mensa, day, null));
+                        //menus.add(new NoMenuCard(mContext, mensa, day, null));
                         noMenuCount++;
                     }
                 }
@@ -139,14 +137,11 @@ public class MensaDayFragment extends BaseFragment {
             // add default no menu card
             if (menus.size() == 0 || menus.size() == noMenuCount) {
                 menus.clear();
-                menus.add(new NoMenuCard(mContext, null, null, null));
+                //menus.add(new NoMenuCard(mContext, null, null, null));
             }
-            */
-
-            //TODO: implement
 
             mAdapter.clear();
-            //mAdapter.addAll(menus);
+            mAdapter.addAll(menus);
             mAdapter.notifyDataSetChanged();
 
             super.onPostExecute(result);

@@ -20,6 +20,7 @@ public class Mensa implements MensaItem {
 	public void addDay(MensaDay menuDay) {
 		if (menuDay != null) {
 			this.days.add(menuDay);
+            menuDay.setMensa(this);
 		}
 	}
 

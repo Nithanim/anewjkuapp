@@ -1,11 +1,14 @@
 package org.voidsink.anewjkuapp.calendar;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.voidsink.anewjkuapp.R;
 import org.voidsink.anewjkuapp.base.BaseArrayAdapter;
+import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,47 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class CalendarEventAdapter extends BaseArrayAdapter<CalendarListItem> {
+public class CalendarEventAdapter extends StickyArrayAdapter<CalendarListItem> {
 
 	private LayoutInflater inflater;
-
-	public static List<CalendarListItem> insertSections(
-			List<CalendarListItem> objects) {
-		if (objects != null) {
-			CalendarListItem last = null;
-			CalendarListItem item = null;
-			CalendarListItem insert = null;
-
-			int i = 0;
-			while (i < objects.size()) {
-				last = item;
-				item = objects.get(i);
-				if (last == null) {
-					if (item.isEvent()) {
-						insert = new CalendarListSection(
-								((CalendarListEvent) item).getDtStart());
-						objects.add(i, insert);
-						item = insert;
-					}
-				} else {
-					if (last.isEvent() && item.isEvent()) {
-						if (!DateUtils.isSameDay(
-								new Date(((CalendarListEvent) last)
-										.getDtStart()),
-								new Date(((CalendarListEvent) item)
-										.getDtStart()))) {
-							insert = new CalendarListSection(
-									((CalendarListEvent) item).getDtStart());
-							objects.add(i, insert);
-							item = insert;
-						}
-					}
-				}
-				i++;
-			}
-		}
-		return objects;
-	}
 
 	public CalendarEventAdapter(Context context) {
 		super(context, R.layout.calendar_list_item);
@@ -165,7 +130,37 @@ public class CalendarEventAdapter extends BaseArrayAdapter<CalendarListItem> {
 		return false;
 	}
 
-	private static class CalendarListEventHolder {
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup viewGroup) {
+        // Build your custom HeaderView
+        LayoutInflater mInflater = LayoutInflater.from(getContext());
+        final View headerView = mInflater.inflate(R.layout.list_header, null);
+
+        final TextView tvHeaderTitle = (TextView) headerView.findViewById(R.id.list_header_text);
+        CalendarListItem card = getItem(position);
+        if (card instanceof CalendarListEvent) {
+            tvHeaderTitle.setText(DateFormat.getDateInstance().format(new Date(((CalendarListEvent) card).getDtStart())));
+        }
+        return headerView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        CalendarListItem card = getItem(position);
+        if (card instanceof CalendarListEvent) {
+
+            Calendar cal = Calendar.getInstance(); // locale-specific
+            cal.setTimeInMillis(((CalendarListEvent) card).getDtStart());
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTimeInMillis();
+        }
+        return 0;
+    }
+
+    private static class CalendarListEventHolder {
 		private TextView title;
 		private TextView descr;
 		private View chip;

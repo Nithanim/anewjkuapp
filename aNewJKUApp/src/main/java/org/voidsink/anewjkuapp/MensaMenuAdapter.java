@@ -2,13 +2,16 @@ package org.voidsink.anewjkuapp;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.voidsink.anewjkuapp.base.BaseArrayAdapter;
+import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
 import org.voidsink.anewjkuapp.calendar.CalendarUtils;
 import org.voidsink.anewjkuapp.mensa.Mensa;
 import org.voidsink.anewjkuapp.mensa.MensaDay;
 import org.voidsink.anewjkuapp.mensa.MensaMenu;
+import org.voidsink.anewjkuapp.utils.UIUtils;
 
 import android.content.Context;
 import android.text.format.DateUtils;
@@ -17,20 +20,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class MensaMenuAdapter extends BaseArrayAdapter<MensaItem> {
+public class MensaMenuAdapter extends StickyArrayAdapter<MensaItem> {
 
 	private static final DateFormat df = SimpleDateFormat.getDateInstance();
 
 	private LayoutInflater inflater;
+    protected boolean mUseDateHeader;
 
-	public MensaMenuAdapter(Context context, int textViewResourceId) {
+	public MensaMenuAdapter(Context context, int textViewResourceId, boolean useDateHeader) {
 		super(context, textViewResourceId);
 
 		this.inflater = LayoutInflater.from(context);
-	}
-
-	public MensaMenuAdapter(Context context) {
-		this(context, 0);
+        this.mUseDateHeader = useDateHeader;
 	}
 
 	@Override
@@ -99,6 +100,7 @@ public class MensaMenuAdapter extends BaseArrayAdapter<MensaItem> {
 			convertView = inflater.inflate(R.layout.mensa_menu_item, parent,
 					false);
 			mensaMenuItemHolder = new MensaMenuHolder();
+
 			mensaMenuItemHolder.name = (TextView) convertView
 					.findViewById(R.id.mensa_menu_item_name);
 			mensaMenuItemHolder.soup = (TextView) convertView
@@ -110,7 +112,7 @@ public class MensaMenuAdapter extends BaseArrayAdapter<MensaItem> {
 			mensaMenuItemHolder.oehBonus = (TextView) convertView
 					.findViewById(R.id.mensa_menu_item_oeh_bonus);
 			mensaMenuItemHolder.chip = convertView
-					.findViewById(R.id.mensa_menu_chip);
+					.findViewById(R.id.empty_chip_background);
 
 			convertView.setTag(mensaMenuItemHolder);
 		}
@@ -119,24 +121,13 @@ public class MensaMenuAdapter extends BaseArrayAdapter<MensaItem> {
 			mensaMenuItemHolder = (MensaMenuHolder) convertView.getTag();
 		}
 
-		String name = mensaMenuItem.getName();
-		if (name != null && !name.isEmpty()) {
-			mensaMenuItemHolder.name.setText(name);
-			mensaMenuItemHolder.name.setVisibility(View.VISIBLE);
-		} else {
-			mensaMenuItemHolder.name.setVisibility(View.GONE);
-		}
-		String soup = mensaMenuItem.getSoup();
-		if (soup != null && !soup.isEmpty()) {
-			mensaMenuItemHolder.soup.setText(soup);
-			mensaMenuItemHolder.soup.setVisibility(View.VISIBLE);
-		} else {
-			mensaMenuItemHolder.soup.setVisibility(View.GONE);
-		}
-		mensaMenuItemHolder.meal.setText(mensaMenuItem.getMeal());
+        UIUtils.setTextAndVisibility(mensaMenuItemHolder.name, mensaMenuItem.getName());
+        UIUtils.setTextAndVisibility(mensaMenuItemHolder.soup, mensaMenuItem.getSoup());
+
+        mensaMenuItemHolder.meal.setText(mensaMenuItem.getMeal());
 		if (mensaMenuItem.getPrice() > 0) {
 			mensaMenuItemHolder.price.setText(String.format("%.2f €",
-					mensaMenuItem.getPrice()));
+                    mensaMenuItem.getPrice()));
 			mensaMenuItemHolder.price.setVisibility(View.VISIBLE);
 
 			if (mensaMenuItem.getOehBonus() > 0) {
@@ -152,6 +143,7 @@ public class MensaMenuAdapter extends BaseArrayAdapter<MensaItem> {
 		}
 		mensaMenuItemHolder.chip
 				.setBackgroundColor(CalendarUtils.COLOR_DEFAULT_LVA);
+        mensaMenuItemHolder.chip.setVisibility(View.GONE);
 
 		return convertView;
 	}
@@ -293,6 +285,54 @@ public class MensaMenuAdapter extends BaseArrayAdapter<MensaItem> {
 		public String getDescr() {
 			return descr;
 		}
-
 	}
+
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup viewGroup) {
+        LayoutInflater mInflater = LayoutInflater.from(getContext());
+        View headerView = mInflater.inflate(R.layout.list_header, viewGroup, false);
+
+        MensaItem card = getItem(position);
+        if (card instanceof MensaMenu) {
+            final TextView tvHeaderTitle = (TextView) headerView.findViewById(R.id.list_header_text);
+            final MensaDay day = ((MensaMenu) card).getDay();
+            if (day != null) {
+                if (mUseDateHeader) {
+                    tvHeaderTitle.setText(DateFormat.getDateInstance().format(day.getDate()));
+                } else {
+                    Mensa mensa = day.getMensa();
+                    if (mensa != null) {
+                        tvHeaderTitle.setText(mensa.getName());
+                    }
+                }
+            }
+        }
+        return headerView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        MensaItem card = getItem(position);
+        if (card instanceof MensaMenu) {
+            final MensaDay day = ((MensaMenu) card).getDay();
+            if (day != null) {
+                if (mUseDateHeader) {
+                    Calendar cal = Calendar.getInstance(); // locale-specific
+                    cal.setTimeInMillis(day.getDate().getTime());
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    return cal.getTimeInMillis();
+                } else {
+                    Mensa mensa = day.getMensa();
+                    if (mensa != null) {
+                        return mensa.getName().hashCode();
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
 }

@@ -15,6 +15,7 @@ public class MensaDay implements MensaItem {
     private Date date;
     private List<MensaMenu> menus;
     private boolean isModified = false;
+    private Mensa mensa;
 
     public MensaDay(Date date) {
         this.date = date;
@@ -33,6 +34,7 @@ public class MensaDay implements MensaItem {
 
     public void addMenu(MensaMenu menu) {
         this.menus.add(menu);
+        menu.setDay(this);
     }
 
     public List<MensaMenu> getMenus() {
@@ -59,5 +61,13 @@ public class MensaDay implements MensaItem {
     @Override
     public int getType() {
         return TYPE_DAY;
+    }
+
+    public void setMensa(Mensa mensa) {
+        this.mensa = mensa;
+    }
+
+    public Mensa getMensa() {
+        return mensa;
     }
 }
