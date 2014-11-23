@@ -124,7 +124,7 @@ public class CalendarEventAdapter extends StickyArrayAdapter<CalendarListItem> {
 
 	@Override
 	public boolean isEnabled(int position) {
-		return false;
+		return (getItem(position) instanceof CalendarListEvent);
 	}
 
     @Override

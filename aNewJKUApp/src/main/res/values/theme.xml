@@ -4,7 +4,7 @@
 -->
 <resources>
 
-    <style name="AppTheme_Light" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme_Light" parent="@style/Theme.AppCompat.Light">
         <item name="actionBarItemBackground">@drawable/selectable_background_apptheme</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Apptheme</item>
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>
@@ -30,6 +30,11 @@
         <item name="homeAsUpIndicator">@drawable/ic_ab_back</item>
     </style>
 
+    <style name="AppTheme.ActionBar.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.Base.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="AppTheme.ActionButton.Overflow" parent="@android:Widget.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow_round</item>
     </style>
@@ -39,6 +44,7 @@
         <item name="backgroundStacked">@color/primary</item>
         <item name="backgroundSplit">@color/primary</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Apptheme</item>
+        <item name="titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
         <item name="android:icon">@android:color/transparent</item>
         <!-- Support library compatibility -->
         <item name="background">@color/primary</item>
@@ -47,6 +53,7 @@
     <style name="ActionBar.Transparent.Apptheme" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@drawable/ab_transparent_apptheme</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Apptheme</item>
+        <item name="titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
         <!-- Support library compatibility -->
         <item name="background">@drawable/ab_transparent_apptheme</item>
     </style>
