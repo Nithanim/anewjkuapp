@@ -14,7 +14,7 @@
     <color name="fullTransparent">#00000000</color>
 
     <!-- Material Design -->
-    <color name="text_hint">#ffbfbfbf</color>
-    <color name="divider">#ffbfbfbf</color>
-    <color name="icon">#ff737373</color>
+    <color name="text_hint">#a07f7f7f</color>
+    <color name="divider">#807f7f7f</color>
+    <color name="icon">#de7f7f7f</color>
 </resources>
