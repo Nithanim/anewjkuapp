@@ -57,7 +57,6 @@ public class GradeListAdapter extends StickyArrayAdapter<ExamGrade> {
 
 	private View getGradeView(View convertView, ViewGroup parent,
                              ExamGrade item) {
-
 		ExamGrade mGrade = (ExamGrade) item;
 		GradeListGradeHolder gradeItemHolder = null;
 
