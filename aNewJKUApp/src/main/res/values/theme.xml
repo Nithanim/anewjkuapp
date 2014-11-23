@@ -4,7 +4,7 @@
 -->
 <resources>
 
-    <style name="AppTheme_Light" parent="@style/Theme.AppCompat.Light">
+    <style name="AppTheme_Light" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="actionBarItemBackground">@drawable/selectable_background_apptheme</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Apptheme</item>
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.Apptheme</item>

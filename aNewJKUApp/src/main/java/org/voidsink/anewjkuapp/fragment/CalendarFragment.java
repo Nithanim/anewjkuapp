@@ -2,14 +2,17 @@ package org.voidsink.anewjkuapp.fragment;
 
 import android.accounts.Account;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +20,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 
 import org.voidsink.anewjkuapp.ImportCalendarTask;
 import org.voidsink.anewjkuapp.R;
+import org.voidsink.anewjkuapp.activity.MainActivity;
 import org.voidsink.anewjkuapp.base.BaseFragment;
 import org.voidsink.anewjkuapp.calendar.CalendarContractWrapper;
 import org.voidsink.anewjkuapp.calendar.CalendarEventAdapter;
@@ -66,6 +72,29 @@ public class CalendarFragment extends BaseFragment {
 
 //		mListView.addFooterView(loadMore);
         mListView.setAdapter(mAdapter);
+
+        mListView.setOnItemClickListener(new ListView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                 CalendarListItem item = mAdapter.getItem(i);
+                if (item instanceof CalendarListEvent) {
+                    Intent intent = new Intent(getContext(), MainActivity.class).putExtra(
+                            MainActivity.ARG_SHOW_FRAGMENT,
+                            MapFragment.class.getName()).setAction(
+                            Intent.ACTION_SEARCH).addFlags(
+                            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    String location = ((CalendarListEvent) item).getLocation();
+                    if (!TextUtils.isEmpty(location)) {
+                        intent.putExtra(SearchManager.QUERY, location);
+                        intent.putExtra(MainActivity.ARG_EXACT_LOCATION, true);
+                    } else {
+                        intent.putExtra(SearchManager.QUERY, "Uniteich");
+                    }
+                    getContext().startActivity(intent);
+                }
+            }
+        });
 
         return view;
     }
