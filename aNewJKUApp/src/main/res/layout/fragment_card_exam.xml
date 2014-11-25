@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <org.voidsink.anewjkuapp.view.StickyListView
+    <org.voidsink.anewjkuapp.view.ListViewWithHeader
         android:id="@+id/exam_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

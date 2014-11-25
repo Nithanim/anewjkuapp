@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
+import org.voidsink.anewjkuapp.base.ListWithHeaderAdapter;
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
 import org.voidsink.anewjkuapp.kusss.GradeType;
 import org.voidsink.anewjkuapp.utils.AppUtils;
@@ -20,7 +20,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class GradeListAdapter extends StickyArrayAdapter<ExamGrade> {
+public class GradeListAdapter extends ListWithHeaderAdapter<ExamGrade> {
 
     private static final DateFormat df = SimpleDateFormat.getDateInstance();
     private LayoutInflater inflater;

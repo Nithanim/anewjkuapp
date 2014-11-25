@@ -21,7 +21,7 @@ import org.voidsink.anewjkuapp.mensa.MensaDay;
 import org.voidsink.anewjkuapp.mensa.MensaMenu;
 import org.voidsink.anewjkuapp.mensa.MenuLoader;
 import org.voidsink.anewjkuapp.mensa.RaabMenuLoader;
-import org.voidsink.anewjkuapp.view.StickyListView;
+import org.voidsink.anewjkuapp.view.ListViewWithHeader;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +49,7 @@ public class MensaDayFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_card_menu, container,
                 false);
 
-        final StickyListView mListView = (StickyListView) view.findViewById(R.id.menu_card_list);
+        final ListViewWithHeader mListView = (ListViewWithHeader) view.findViewById(R.id.menu_card_list);
         mAdapter = new MensaMenuAdapter(getContext(), android.R.layout.simple_list_item_1, false);
         mListView.setAdapter(mAdapter);
 

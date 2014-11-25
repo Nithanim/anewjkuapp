@@ -131,7 +131,7 @@
     <string name="title_map">Map</string>
     <string name="title_mensa">Cafeteria</string>
     <string name="title_oeh_info">Info</string>
-    <string name="title_oeh_news">News</string>
+    <string name="title_oeh_news">ÖH News</string>
     <string name="title_oeh_rights">Right</string>
     <string name="title_stats">Statistics</string>
     <string name="interval_1d">Every day</string>
@@ -164,4 +164,22 @@
     <string name="progress_load_feed">Loading news...</string>
     <string name="pref_stats_positive_grades_only_title">Grade point average</string>
     <string name="pref_stats_positive_grades_only_summary">Grade point average is calculated for positive grades only</string>
+    <string name="notification_sync_studies">Synchronizing curricula</string>
+    <string name="notification_sync_studies_loading">Loading curricula</string>
+    <string name="notification_sync_studies_saving">Saving curricula</string>
+    <string name="notification_sync_studies_updating">Updating curricula</string>
+    <string name="studies_active_status">Status</string>
+    <string name="studies_dt_end">End</string>
+    <string name="studies_dt_start">Begin</string>
+    <string name="studies_is_standard">Standard</string>
+    <string name="studies_skz">Cur.Id</string>
+    <string name="studies_title">Field of study</string>
+    <string name="title_studies">Field of study</string>
+    <string name="studies_steop_done_yes">Completed</string>
+    <string name="studies_steop_done_no">Outstanding</string>
+    <string name="studies_active_status_no">Inactive</string>
+    <string name="studies_active_status_yes">Active</string>
+    <string name="grade_gb">Pass</string>
+    <string name="grade_gab">Passed with distinction</string>
+    <string name="grade_get">Successful participation</string>
 </resources>

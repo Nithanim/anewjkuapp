@@ -13,7 +13,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.voidsink.anewjkuapp.R;
-import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
+import org.voidsink.anewjkuapp.base.ListWithHeaderAdapter;
 import org.voidsink.anewjkuapp.calendar.CalendarListEvent;
 import org.voidsink.anewjkuapp.calendar.CalendarListItem;
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
@@ -27,7 +27,7 @@ import java.util.Date;
 /**
  * Created by paul on 23.11.2014.
  */
-public class RssListAdapter extends StickyArrayAdapter<FeedEntry> {
+public class RssListAdapter extends ListWithHeaderAdapter<FeedEntry> {
 
     private static final DateFormat df = SimpleDateFormat.getDateInstance();
     private static final String TAG = RssListAdapter.class.getSimpleName();

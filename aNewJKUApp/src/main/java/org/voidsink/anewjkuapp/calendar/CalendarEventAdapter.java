@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.voidsink.anewjkuapp.R;
 import org.voidsink.anewjkuapp.base.BaseArrayAdapter;
-import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
+import org.voidsink.anewjkuapp.base.ListWithHeaderAdapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class CalendarEventAdapter extends StickyArrayAdapter<CalendarListItem> {
+public class CalendarEventAdapter extends ListWithHeaderAdapter<CalendarListItem> {
 
 	private LayoutInflater inflater;
 

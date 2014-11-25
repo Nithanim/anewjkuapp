@@ -1,16 +1,12 @@
 package org.voidsink.anewjkuapp.view;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import org.voidsink.anewjkuapp.base.BaseArrayAdapter;
-import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
+import org.voidsink.anewjkuapp.base.ListWithHeaderAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +17,9 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 /**
  * @author Gabriele Mariotti (gabri.mariotti@gmail.com)
  */
-public class StickyListView extends StickyListHeadersListView {
+public class ListViewWithHeader extends StickyListHeadersListView {
 
-    protected static String TAG = "CardListView";
+    protected static String TAG = ListViewWithHeader.class.getSimpleName();
 
     /**
      * Stycky Card Array Adapter
@@ -44,17 +40,17 @@ public class StickyListView extends StickyListHeadersListView {
     //--------------------------------------------------------------------------
     // Constructors
     //--------------------------------------------------------------------------
-    public StickyListView(Context context) {
+    public ListViewWithHeader(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public StickyListView(Context context, AttributeSet attrs) {
+    public ListViewWithHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public StickyListView(Context context, AttributeSet attrs, int defStyle) {
+    public ListViewWithHeader(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }
@@ -94,19 +90,19 @@ public class StickyListView extends StickyListHeadersListView {
 
     @Override
     public void setAdapter(StickyListHeadersAdapter adapter) {
-        if (adapter instanceof StickyArrayAdapter) {
-            setAdapter((StickyArrayAdapter) adapter);
+        if (adapter instanceof ListWithHeaderAdapter) {
+            setAdapter((ListWithHeaderAdapter) adapter);
         } else {
             Log.e(TAG, "You are using a generic adapter. Pay attention: your adapter has to call cardArrayAdapter#getView method");
             super.setAdapter(adapter);
         }
     }
 
-    public void setAdapter(StickyArrayAdapter adapter) {
+    public void setAdapter(ListWithHeaderAdapter adapter) {
         super.setAdapter(adapter);
 
         //Set Layout used by items
-        adapter.setCardListView(this);
+        adapter.setListView(this);
         mAdapter = adapter;
     }
 }

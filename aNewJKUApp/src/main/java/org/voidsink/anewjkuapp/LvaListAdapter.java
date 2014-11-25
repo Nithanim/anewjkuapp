@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.voidsink.anewjkuapp.R;
-import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
+import org.voidsink.anewjkuapp.base.ListWithHeaderAdapter;
 import org.voidsink.anewjkuapp.calendar.CalendarUtils;
 import org.voidsink.anewjkuapp.kusss.ExamGrade;
 import org.voidsink.anewjkuapp.kusss.LvaState;
@@ -21,7 +21,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class LvaListAdapter extends StickyArrayAdapter<LvaWithGrade>{
+public class LvaListAdapter extends ListWithHeaderAdapter<LvaWithGrade>{
 
 	private List<LvaWithGrade> mAllLvas;
 	private LayoutInflater inflater;

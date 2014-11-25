@@ -24,7 +24,7 @@ import org.voidsink.anewjkuapp.base.BaseFragment;
 import org.voidsink.anewjkuapp.rss.lib.FeedEntry;
 import org.voidsink.anewjkuapp.rss.lib.FeedPullParser;
 import org.voidsink.anewjkuapp.utils.Consts;
-import org.voidsink.anewjkuapp.view.StickyListView;
+import org.voidsink.anewjkuapp.view.ListViewWithHeader;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -75,7 +75,7 @@ public class RssFeedFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_rss_feed, container, false);
 
-        final StickyListView mCardListView = (StickyListView) v.findViewById(R.id.rssfeed_list);
+        final ListViewWithHeader mCardListView = (ListViewWithHeader) v.findViewById(R.id.rssfeed_list);
 
         mCardArrayAdapter = new RssListAdapter(getContext(), mOptions);
         mCardListView.setAdapter(mCardArrayAdapter);

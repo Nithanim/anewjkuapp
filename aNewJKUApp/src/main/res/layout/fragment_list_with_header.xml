@@ -5,8 +5,7 @@
     android:orientation="vertical" >
 
     <org.voidsink.anewjkuapp.view.ListViewWithHeader
-        android:id="@+id/grade_card_list"
+        android:id="@+id/list_with_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="match_parent" />
 </LinearLayout>

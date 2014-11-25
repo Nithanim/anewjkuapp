@@ -12,6 +12,7 @@ import android.graphics.EmbossMaskFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.androidplot.pie.PieChart;
@@ -19,6 +20,7 @@ import com.androidplot.pie.Segment;
 import com.androidplot.pie.SegmentFormatter;
 
 import org.voidsink.anewjkuapp.ImportPoiTask;
+import org.voidsink.anewjkuapp.ImportStudiesTask;
 import org.voidsink.anewjkuapp.KusssAuthenticator;
 import org.voidsink.anewjkuapp.PreferenceWrapper;
 import org.voidsink.anewjkuapp.R;
@@ -29,6 +31,7 @@ import org.voidsink.anewjkuapp.kusss.GradeType;
 import org.voidsink.anewjkuapp.kusss.Lva;
 import org.voidsink.anewjkuapp.kusss.LvaState;
 import org.voidsink.anewjkuapp.kusss.LvaWithGrade;
+import org.voidsink.anewjkuapp.kusss.Studies;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -71,7 +74,11 @@ public class AppUtils {
                         errorOccured = true;
                     }
                 }
-
+                if (shouldImportStudies(mLastVersion, mCurrentVersion)) {
+                    if (!importStudies(context)) {
+                        errorOccured = true;
+                    }
+                }
             } catch (Exception e) {
                 Log.e(TAG, "doOnNewVersion failed", e);
                 Analytics.sendException(context, e, false);
@@ -81,6 +88,25 @@ public class AppUtils {
                 PreferenceWrapper.setLastVersion(context, mCurrentVersion);
             }
         }
+    }
+
+    private static boolean shouldImportStudies(int lastVersion, int currentVersion) {
+        // studies added with 140026
+        // import on startup to avoid strange behaviour and missing tabs
+        return (lastVersion < 100026 && currentVersion >= 100026) ||
+                (lastVersion < 140026 && currentVersion >= 140026);
+    }
+
+    private static boolean importStudies(Context context) {
+        Account account = getAccount(context);
+        if (account != null) {
+            try {
+                new ImportStudiesTask(account, context).execute();
+            } catch (Exception e) {
+                Analytics.sendException(context, e, false);
+            }
+        }
+        return true;
     }
 
     private static boolean removeAccount(Context context) {
@@ -96,7 +122,8 @@ public class AppUtils {
                                                   int currentVersion) {
         // calendar names changed with 100017, remove account for avoiding
         // corrupted data
-        return (lastVersion < 100017 && currentVersion >= 100017);
+        return (lastVersion < 100017 && currentVersion >= 100017) ||
+               (lastVersion < 140017 && currentVersion >= 140017);
     }
 
     private static boolean initPreferences(Context context) {
@@ -447,7 +474,7 @@ public class AppUtils {
     }
 
     public static double getGradePercent(List<ExamGrade> grades, Grade grade, boolean ectsWeighting) {
-        if (grades.size() == 0) return 0;
+        if (grades == null || grades.size() == 0) return 0;
 
         double count = 0;
         double sum = 0;
@@ -473,7 +500,7 @@ public class AppUtils {
         List<LvaWithGrade> result = new ArrayList<LvaWithGrade>();
 
         for (Lva lva : lvas) {
-            if (terms.contains(lva.getTerm())) {
+            if (terms == null || terms.contains(lva.getTerm())) {
                 ExamGrade grade = findGrade(grades, lva);
                 result.add(new LvaWithGrade(lva, grade));
             }
@@ -545,5 +572,23 @@ public class AppUtils {
         AppUtils.sortGrades(result);
 
         return result;
+    }
+
+    public static void sortStudies(List<Studies> mStudies) {
+        Collections.sort(mStudies, new Comparator<Studies>() {
+
+            @Override
+            public int compare(Studies lhs, Studies rhs) {
+                int value = lhs.getUni().compareToIgnoreCase(rhs.getUni());
+                if (value == 0) {
+                    value = lhs.getDtStart().compareTo(rhs.getDtStart());
+                }
+                if (value == 0) {
+                    value = lhs.getSkz().compareTo(rhs.getSkz());
+                }
+                return value;
+            }
+        });
+
     }
 }

@@ -36,7 +36,7 @@ import org.voidsink.anewjkuapp.calendar.CalendarUtils;
 import org.voidsink.anewjkuapp.utils.Analytics;
 import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.utils.Consts;
-import org.voidsink.anewjkuapp.view.StickyListView;
+import org.voidsink.anewjkuapp.view.ListViewWithHeader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +56,7 @@ public class CalendarFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_card_calendar, container,
                 false);
 
-        final StickyListView mListView = (StickyListView) view.findViewById(R.id.calendar_card_events);
+        final ListViewWithHeader mListView = (ListViewWithHeader) view.findViewById(R.id.calendar_card_events);
 
         Button loadMore = (Button) view.findViewById(R.id.calendar_card_load);
 

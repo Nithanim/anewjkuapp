@@ -120,7 +120,7 @@ public class NavigationDrawerFragment extends BaseFragment {
 				}
 			}
 		}
-		return "";
+		return c.getString(R.string.app_name);
 	}
 
 	@Override
@@ -182,7 +182,12 @@ public class NavigationDrawerFragment extends BaseFragment {
 			});
 		} else {
 			mUser.setText(account.name);
-			mUser.setOnClickListener(null);
+			mUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity.StartMyStudies(getContext());
+                }
+            });
 		}
 	}
 

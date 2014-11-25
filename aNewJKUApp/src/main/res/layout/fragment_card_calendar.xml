@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.voidsink.anewjkuapp.view.StickyListView
+    <org.voidsink.anewjkuapp.view.ListViewWithHeader
         android:id="@+id/calendar_card_events"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

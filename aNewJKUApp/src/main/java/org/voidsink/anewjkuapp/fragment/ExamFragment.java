@@ -27,7 +27,7 @@ import org.voidsink.anewjkuapp.R;
 import org.voidsink.anewjkuapp.base.BaseFragment;
 import org.voidsink.anewjkuapp.utils.AppUtils;
 import org.voidsink.anewjkuapp.utils.Consts;
-import org.voidsink.anewjkuapp.view.StickyListView;
+import org.voidsink.anewjkuapp.view.ListViewWithHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ExamFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card_exam, container, false);
 
-        final StickyListView mListView = (StickyListView) view.findViewById(R.id.exam_list);
+        final ListViewWithHeader mListView = (ListViewWithHeader) view.findViewById(R.id.exam_list);
         mAdapter = new ExamListAdapter(getContext());
         mListView.setAdapter(mAdapter);
 

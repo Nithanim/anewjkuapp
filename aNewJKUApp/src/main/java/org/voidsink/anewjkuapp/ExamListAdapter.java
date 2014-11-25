@@ -4,7 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import org.voidsink.anewjkuapp.base.StickyArrayAdapter;
+import org.voidsink.anewjkuapp.base.ListWithHeaderAdapter;
 import org.voidsink.anewjkuapp.calendar.CalendarUtils;
 
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class ExamListAdapter extends StickyArrayAdapter<ExamListItem> {
+public class ExamListAdapter extends ListWithHeaderAdapter<ExamListItem> {
 
 	private static final DateFormat df = SimpleDateFormat.getDateInstance();
 
