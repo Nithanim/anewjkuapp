@@ -100,9 +100,9 @@ public class GradeListAdapter extends ListWithHeaderAdapter<ExamGrade> {
             gradeItemHolder.skz.setVisibility(View.GONE);
         }
 
-        gradeItemHolder.chipBack.setBackgroundColor(mGrade.getGrade().getColor());
-        gradeItemHolder.chipGrade.setText(String.format("%d", mGrade.getGrade().getValue()));
-        gradeItemHolder.chipInfo.setText(String.format("%.2f ECTS", mGrade.getEcts()));
+        gradeItemHolder.chipBack.setBackgroundColor(UIUtils.getChipGradeColor(mGrade));
+        gradeItemHolder.chipGrade.setText(UIUtils.getChipGradeText(mGrade));
+        gradeItemHolder.chipInfo.setText(UIUtils.getChipGradeEcts(mGrade.getEcts()));
 
         final DateFormat df = DateFormat.getDateInstance();
 

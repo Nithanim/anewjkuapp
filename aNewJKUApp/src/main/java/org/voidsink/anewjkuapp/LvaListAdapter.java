@@ -78,15 +78,9 @@ public class LvaListAdapter extends ListWithHeaderAdapter<LvaWithGrade>{
         lvaHolder.code.setText(lva.getLva().getCode());
 
         ExamGrade grade = lva.getGrade();
-        if (grade == null) {
-            lvaHolder.chipBack.setBackgroundColor(Color.GRAY);
-            lvaHolder.chipGrade.setText("?");
-        } else {
-            lvaHolder.chipBack.setBackgroundColor(grade.getGrade().getColor());
-            lvaHolder.chipGrade.setText(String.format("%d", grade.getGrade().getValue()));
-        }
-        lvaHolder.chipEcts.setText(String.format("%.2f ECTS", lva.getLva()
-                .getEcts()));
+        lvaHolder.chipBack.setBackgroundColor(UIUtils.getChipGradeColor(grade));
+        lvaHolder.chipGrade.setText(UIUtils.getChipGradeText(grade));
+        lvaHolder.chipEcts.setText(UIUtils.getChipGradeEcts(lva.getLva().getEcts()));
 
 		return convertView;
 	}
