@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.voidsink.kussslib.Curricula;
 
-public class CurriculaImpl implements Curricula {
+class CurriculaImpl implements Curricula {
 
     private boolean isStandard;
     private int cid;
@@ -19,7 +19,7 @@ public class CurriculaImpl implements Curricula {
     private Date dtEnd;
     
     
-    public CurriculaImpl(Element row) throws ParseException {
+    CurriculaImpl(Element row) throws ParseException {
         Elements columns = row.getElementsByTag("td");
         if (columns.size() >= 8) {
             isStandard = (columns.get(0).getElementsByAttributeValue("checked", "checked").size() > 0);
@@ -41,7 +41,7 @@ public class CurriculaImpl implements Curricula {
     }
     
     
-    public CurriculaImpl(Date dtStart, Date dtEnd) {
+    CurriculaImpl(Date dtStart, Date dtEnd) {
         this.dtStart = dtStart;
         this.dtEnd = dtEnd;
     }

@@ -9,29 +9,28 @@ import org.voidsink.kussslib.CourseType;
 import org.voidsink.kussslib.Curricula;
 import org.voidsink.kussslib.Exam;
 import org.voidsink.kussslib.Grade;
-import org.voidsink.kussslib.KusssFactory;
 import org.voidsink.kussslib.Term;
 
-public class KusssFactoryImpl implements KusssFactory {
+public final class KusssFactoryImpl {
+	private KusssFactoryImpl() {
+		throw new UnsupportedOperationException();
+	}
 
-	@Override
-	public Course getCourse(Term term, String courseId, String title, int cid,
+	public static Course getCourse(Term term, String courseId, String title, int cid,
 			String lecturer, double ects, double sws, CourseType courseType,
 			String classCode) {
 		return new CourseImpl(term, courseId, title, cid, lecturer, ects, sws,
 				courseType, classCode);
 	}
 
-	@Override
-	public Curricula getCurricula(int cid, String title, String uni,
+	public static Curricula getCurricula(int cid, String title, String uni,
 			Date dtStart, Date dtEnd, boolean isStandard, boolean steopDone,
 			boolean active) {
 		return new CurriculaImpl(cid, title, uni, dtStart, dtEnd, isStandard,
 				steopDone, active);
 	}
 
-	@Override
-	public Assessment getAssessment(Date date, String title, Term term,
+	public static Assessment getAssessment(Date date, String title, Term term,
 			String courseId, Grade grade, int cid,
 			AssessmentType assessmentType, String classCode, double ects,
 			double sws, CourseType courseType) {
@@ -39,8 +38,7 @@ public class KusssFactoryImpl implements KusssFactory {
 				assessmentType, classCode, ects, sws, courseType);
 	}
 
-	@Override
-	public Exam getExam(String courseId, Term term, Date dtStart, Date dtEnd,
+	public static Exam getExam(String courseId, Term term, Date dtStart, Date dtEnd,
 			String location, String title, int cid, String description,
 			String info, boolean isRegistered, int maxParticipants,
 			int participants, Date registrationDtStart, Date registrationDtEnd,

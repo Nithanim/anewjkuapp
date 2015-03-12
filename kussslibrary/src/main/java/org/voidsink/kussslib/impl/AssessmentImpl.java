@@ -13,7 +13,7 @@ import org.voidsink.kussslib.CourseType;
 import org.voidsink.kussslib.Grade;
 import org.voidsink.kussslib.Term;
 
-public class AssessmentImpl implements Assessment {
+class AssessmentImpl implements Assessment {
 
 	private static final Pattern courseIdTermPattern = Pattern
 			.compile(Parser.PATTERN_LVA_NR_COMMA_TERM);
@@ -51,7 +51,7 @@ public class AssessmentImpl implements Assessment {
 		this.courseType = courseType;
 	}
 
-	public AssessmentImpl(AssessmentType type, Element row)
+	AssessmentImpl(AssessmentType type, Element row)
 			throws ParseException {
 
 		this(null, "", null, "", null, 0, type, "", 0, 0, null);
@@ -112,9 +112,8 @@ public class AssessmentImpl implements Assessment {
 					sws = Double.parseDouble(ectsSws[1]);
 				}
 			} catch (NumberFormatException e) {
-				// TODO: Error position? Oder NumberFormatException weitergeben?
 				throw new ParseException(String.format(
-						Parser.FAILED_PARSING_NUMERIC_VALUE, "ects/sws"), 0);
+						Parser.FAILED_PARSING_NUMERIC_VALUE, "ects/sws"), 5);
 			}
 
 			try {
@@ -123,17 +122,16 @@ public class AssessmentImpl implements Assessment {
 					cid = Integer.parseInt(cidText); // curriculum id
 				}
 			} catch (NumberFormatException e) {
-				// TODO: Error position? Oder NumberFormatException weitergeben?
 				throw new ParseException(String.format(
 						Parser.FAILED_PARSING_NUMERIC_VALUE, "curriculum id"),
-						0);
+						6);
 			}
 
 			classCode = columns.get(3).text();
 		}
 	}
 
-	// TODO: stimmt das noch so?
+
 	public boolean isInitialized() {
 		return this.assessmentType != null && this.date != null
 				&& this.grade != null;

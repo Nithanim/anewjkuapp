@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 import org.voidsink.kussslib.Exam;
 import org.voidsink.kussslib.Term;
 
-public class ExamImpl implements Exam {
+class ExamImpl implements Exam {
 
 	private static final Pattern courseIdTermPattern = Pattern
 			.compile(Parser.PATTERN_LVA_NR_COMMA_TERM);
@@ -62,7 +62,7 @@ public class ExamImpl implements Exam {
 		this.unregistrationDt = unregistrationDt;
 	}
 
-	public ExamImpl(Element row, boolean isNewExam) throws ParseException {
+	ExamImpl(Element row, boolean isNewExam) throws ParseException {
 
 		this("", null, null, null, "", "", 0, "", "", false, 0, 0, null, null,
 				null);
@@ -151,17 +151,11 @@ public class ExamImpl implements Exam {
 		String endTime = "";
 		String location = "";
 
-		try {
-			if (splitted.length > 1) {
-				time = extractTimeString(splitted[0]);
-				location = splitted[1];
-			} else {
-				time = extractTimeString(splitted[0]);
-			}
-		} catch (Exception e) {
-			// TODO: REMOVE EXCEPTION HANDLING HERE BECAUSE NO EXCEPTION THROWN?
-			// Log.e(TAG, "cant parse string", e);
-			// Analytics.sendException(c, e, false, timeLocation);
+		if (splitted.length > 1) {
+			time = extractTimeString(splitted[0]);
+			location = splitted[1];
+		} else {
+			time = extractTimeString(splitted[0]);
 		}
 
 		int mSign = time.indexOf("-");
@@ -208,13 +202,33 @@ public class ExamImpl implements Exam {
 	}
 
 	public boolean isInitialized() {
-		return !this.courseId.isEmpty() && !TextUtils.isEmpty(this.term)
+		return !this.courseId.isEmpty() && !term.isEmpty()
 				&& this.dtStart != null && this.dtEnd != null;
 	}
 
-	public void addAdditionalInfo(Element element) {
-		// TODO Auto-generated method stub
+	public void addAdditionalInfo(Element row) {
+		Elements columns = row.getElementsByTag("td");
+        if (columns.size() == 1) {
+            String text = columns.get(0).text().trim();
+            if (!text.isEmpty()) {
+                Elements info = columns.get(0).getElementsByAttributeValue(
+                        "class", "info_icon");
+                if (info.size() > 0) {
+                    setInfo(text);
+                } else {
+                	// TODO: parse participants, registrationDtStart, registrationDtEnd, ... from description string
+                	setDescription(text);
+                }
+            }
+        }
+	}
 
+	private void setDescription(String description) {
+		this.description = description;
+	}
+
+	private void setInfo(String info) {
+		this.info = info;
 	}
 
 	public String getCourseId() {

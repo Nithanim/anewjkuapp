@@ -1,5 +1,6 @@
 package org.voidsink.kussslib.impl;
 
+import java.text.ParseException;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Element;
@@ -8,7 +9,7 @@ import org.voidsink.kussslib.Course;
 import org.voidsink.kussslib.CourseType;
 import org.voidsink.kussslib.Term;
 
-public class CourseImpl implements Course {
+class CourseImpl implements Course {
 
 	private static final Pattern courseIdPattern = Pattern
 			.compile(Parser.PATTERN_LVA_NR_WITH_DOT);
@@ -22,12 +23,12 @@ public class CourseImpl implements Course {
 	private CourseType courseType;
 	private String classCode;
 
-	public CourseImpl(Term term, String courseId) {
+	CourseImpl(Term term, String courseId) {
 		this.term = term;
 		this.courseId = courseId;
 	}
 
-	public CourseImpl(Term term, Element row) throws NumberFormatException {
+	CourseImpl(Term term, Element row) throws ParseException {
 		this(term,"");
 
         Elements columns = row.getElementsByTag("td");
@@ -41,7 +42,16 @@ public class CourseImpl implements Course {
 				title = columns.get(5).text();
 				courseType = CourseType.parseCourseType(columns.get(4).text()); // type (UE, ...)
 				lecturer = columns.get(7).text(); // lecturer
-				cid = Integer.parseInt(columns.get(2).text()); // curr. id
+				
+				try {
+					cid = Integer.parseInt(columns.get(2).text()); // curr. id
+				}
+				catch (NumberFormatException e) {
+					throw new ParseException(String.format(
+							Parser.FAILED_PARSING_NUMERIC_VALUE, "curriculum id"),
+							2);
+				}
+				
 				ects = Double.parseDouble(columns.get(8).text()
 						.replace(",", ".")); // ECTS
 				sws = (this.ects * 2/3D); //Sws //FIXME
@@ -109,7 +119,7 @@ public class CourseImpl implements Course {
 	
 	
 	public boolean isInitialized() {
-		return !TextUtils.isEmpty(term) && !TextUtils.isEmpty(courseId);
+		return !term.isEmpty() && !TextUtils.isEmpty(courseId);
 	}
 }
 	

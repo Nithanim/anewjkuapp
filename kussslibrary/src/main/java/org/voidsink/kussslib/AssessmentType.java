@@ -1,9 +1,22 @@
 package org.voidsink.kussslib;
 
+/**
+ * Enumeration contains all possible assessment types in KUSSS.
+ * 
+ * @author Paul Pretsch, Lukas Habring, Michaela Schoenbauer
+ * @version 1.0
+ *
+ */
 public enum AssessmentType {
-	INTERIM_COURSE_ASSESSMENT, FINAL_COURSE_ASSESSMENT, RECOGNIZED_COURSE_CERTIFICATE, RECOGNIZED_EXAM, RECOGNIZED_ASSESSMENT, FINAL_EXAM, ALL, NONE_AVAILABLE;
+	INTERIM_COURSE_ASSESSMENT, FINAL_COURSE_ASSESSMENT,
+	RECOGNIZED_COURSE_CERTIFICATE, RECOGNIZED_EXAM,
+	RECOGNIZED_ASSESSMENT, FINAL_EXAM, ALL, NONE_AVAILABLE;
 
-	//TODO: Überprüfen, ob das noch stimmt
+	/**
+	 * Receives a string and parses the correct assessment type from it.
+	 * @param text The string which describes the assessment type
+	 * @return The assessment type parsed from the string
+	 */
 	public static AssessmentType parseAssessmentType(String text) {
 		text = text.trim().toLowerCase();
 		if (text.equals("vorlÃ¤ufige lehrveranstaltungsbeurteilungen")

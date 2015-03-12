@@ -39,14 +39,13 @@ import org.voidsink.kussslib.Grade;
 import org.voidsink.kussslib.KusssHandler;
 import org.voidsink.kussslib.Term;
 
-public class KusssHandlerImpl implements KusssHandler {
+public final class KusssHandlerImpl implements KusssHandler {
 
 	private CookieManager mCookies;
 	private String sessionId = "";
 	private IExceptionListener exceptionListener = null;
 
 	private static final String URL_MY_LVAS = "https://www.kusss.jku.at/kusss/assignment-results.action";
-	private static final String URL_GET_TERMS = "https://www.kusss.jku.at/kusss/listmystudentlvas.action";
 	private static final String URL_GET_ICAL = "https://www.kusss.jku.at/kusss/ical-multi-sz.action";
 	private static final String URL_MY_GRADES = "https://www.kusss.jku.at/kusss/gradeinfo.action";
 	private static final String URL_START_PAGE = "https://www.kusss.jku.at/kusss/studentwelcome.action";
@@ -506,7 +505,7 @@ public class KusssHandlerImpl implements KusssHandler {
 		return courses;
 	}
 
-	public boolean selectTerm(Term term) throws IOException {
+	private boolean selectTerm(Term term) throws IOException {
 		Document doc = Jsoup.connect(URL_SELECT_TERM)
 				.data("term", term.toString()).data("previousQueryString", "")
 				.data("reloadAction", "coursecatalogue-start.action").post();
