@@ -48,7 +48,8 @@ public final class KusssHandlerImpl implements KusssHandler {
 	private static final String URL_MY_LVAS = "https://www.kusss.jku.at/kusss/assignment-results.action";
 	private static final String URL_GET_ICAL = "https://www.kusss.jku.at/kusss/ical-multi-sz.action";
 	private static final String URL_MY_GRADES = "https://www.kusss.jku.at/kusss/gradeinfo.action";
-	private static final String URL_START_PAGE = "https://www.kusss.jku.at/kusss/studentwelcome.action";
+    private static final String URL_KUSSS_INDEX = "https://www.kusss.jku.at/kusss/index.action";
+    private static final String URL_START_PAGE = "https://www.kusss.jku.at/kusss/studentwelcome.action";
 	private static final String URL_LOGOUT = "https://www.kusss.jku.at/kusss/logout.action";
 	private static final String URL_LOGIN = "https://www.kusss.jku.at/kusss/login.action";
 	private static final String URL_GET_NEW_EXAMS = "https://www.kusss.jku.at/kusss/szsearchexam.action";
@@ -58,8 +59,8 @@ public final class KusssHandlerImpl implements KusssHandler {
 
 	private static final String SELECT_MY_LVAS = "body.intra > table > tbody > tr > td > table > tbody > tr > td.contentcell > div.contentcell > table > tbody > tr:has(td)";
 	private static final String SELECT_MY_GRADES = "body.intra > table > tbody > tr > td > table > tbody > tr > td.contentcell > div.contentcell > *";
-	private static final String SELECT_NOT_LOGGED_IN = "body > table > tbody > tr > td > table > tbody > tr > td.contentcell > div.contentcell > h4";
-	// private static final String SELECT_ACTUAL_EXAMS =
+    private static final String SELECT_LOGOUT = "body > table > tbody > tr > td > div > ul > li > a[href*=logout.action]";
+    // private static final String SELECT_ACTUAL_EXAMS =
 	// "body.intra > table > tbody > tr > td > table > tbody > tr > td.contentcell > div.contentcell > div.tabcontainer > div.tabcontent > table > tbody > tr > td > form > table > tbody > tr:has(td)";
 	private static final String SELECT_NEW_EXAMS = "body.intra > table > tbody > tr > td > table > tbody > tr > td.contentcell > div.contentcell > div.tabcontainer > div.tabcontent > div.sidetable > form > table > tbody > tr:has(td)";
 	private static final String SELECT_EXAMS = "body.intra > table > tbody > tr > td > table > tbody > tr > td.contentcell > div.contentcell > div.tabcontainer > div.tabcontent > table > tbody > tr > td > form > table > tbody > tr:has(td)";
@@ -79,95 +80,137 @@ public final class KusssHandlerImpl implements KusssHandler {
 
 	@Override
 	public synchronized boolean login(String user, String password) {
-		if (user == null || password == null) {
-			return false;
-		}
-		try {
-			if ((user.length() > 0) && (user.charAt(0) != 'k')) {
-				user = "k" + user;
-			}
+        if (user == null || password == null) {
+            return false;
+        }
 
-			Document doc = Jsoup.connect(URL_LOGIN).timeout(TIMEOUT_LOGIN)
-					.data("j_username", user).data("j_password", password)
-					.post();
+        try {
+            if ((user.length() > 0) && (user.charAt(0) != 'k')) {
+                user = "k" + user;
+            }
 
-			// TODO: check document for successful login message
+            mCookies.getCookieStore().removeAll();
 
-			sessionId = getSessionIDFromCookie();
+            Jsoup.connect(URL_KUSSS_INDEX).timeout(TIMEOUT_LOGIN).followRedirects(true).get();
 
-			if (isLoggedIn()) {
-				return true;
-			}
-			sessionId = null;
-			return false;
-		} catch (SocketTimeoutException e) {
-			// bad connection, timeout
-			sessionId = null;
-			return false;
-		} catch (Exception e) {
-			onHandleException(e, true);
-			sessionId = null;
-			return false;
-		}
+            Connection.Response r = Jsoup.connect(URL_LOGIN)
+                    .cookies(getCookieMap())
+                    .data("j_username", user)
+                    .data("j_password", password)
+                    .timeout(TIMEOUT_LOGIN)
+                    .followRedirects(true)
+                    .method(Connection.Method.POST)
+                    .execute();
+
+            if (r.url() != null) {
+                r = Jsoup.connect(r.url().toString())
+                        .cookies(getCookieMap())
+                        .method(Connection.Method.GET)
+                        .execute();
+            }
+
+            Document doc = r.parse();
+
+            if (isLoggedIn(doc)) {
+                return true;
+            }
+
+            if (isLoggedIn()) {
+                return true;
+            }
+
+            sessionId = null;
+            return false;
+        } catch (SocketTimeoutException e) {
+            // bad connection, timeout
+            sessionId = null;
+            return false;
+        } catch (Exception e) {
+            sessionId = null;
+            onHandleException(e, true);
+            return false;
+        }
 	}
 
-	private String getSessionIDFromCookie() {
-		try {
-			List<HttpCookie> cookies = mCookies.getCookieStore().get(
-					new URI("https://www.kusss.jku.at/"));
+    private String getSessionIDFromCookie() {
+        try {
+            List<HttpCookie> cookies = mCookies.getCookieStore().get(
+                    new URI("https://www.kusss.jku.at/"));
 
-			for (HttpCookie cookie : cookies) {
-				if (cookie.getName().equals("JSESSIONID")) {
-					return cookie.getValue();
-				}
-			}
-			return null;
-		} catch (URISyntaxException e) {
-			return null;
-		}
-	}
+            for (HttpCookie cookie : cookies) {
+                if (cookie.getName().equals("JSESSIONID")) {
+                    return cookie.getValue();
+                }
+            }
+            return null;
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    private Map<String, String> getCookieMap() {
+        Map<String, String> cookies = new HashMap<>();
+        for (HttpCookie cookie : mCookies.getCookieStore().getCookies()) {
+            cookies.put(cookie.getName(), cookie.getValue());
+        }
+        return cookies;
+    }
+
+    private String getCookieString() {
+        String cookies = "";
+        for (HttpCookie cookie : mCookies.getCookieStore().getCookies()) {
+            cookies += String.format("%s=%s;", cookie.getName(), cookie.getValue());
+        }
+        return cookies;
+    }
 
 	@Override
 	public boolean logout() {
 		try {
 			Connection.Response r = Jsoup.connect(URL_LOGOUT)
-					.method(Connection.Method.GET).execute();
+                    .cookies(getCookieMap())
+                    .method(Connection.Method.GET)
+                    .execute();
 
 			if (r == null) {
 				return false;
 			}
 
-			return !isLoggedIn();
+            if (!isLoggedIn()) {
+                mCookies.getCookieStore().removeAll();
+                sessionId = null;
+                return true;
+            }
+
+			return false;
 		} catch (Exception e) {
 			onHandleException(e, true);
 			return true;
 		}
 	}
 
+    private boolean isLoggedIn(Document doc) {
+        Elements logoutAction = doc.select(SELECT_LOGOUT);
+        if (logoutAction.size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 	@Override
 	public boolean isLoggedIn() {
-		try {
-			String actSessionId = getSessionIDFromCookie();
-			if (actSessionId == null || sessionId == null
-					|| !sessionId.equals(actSessionId)) {
-				return false;
-			}
+        try {
+            Document doc = Jsoup.connect(URL_START_PAGE).cookies(getCookieMap()).timeout(TIMEOUT_LOGIN).followRedirects(true).get();
 
-			Document doc = Jsoup.connect(URL_START_PAGE).timeout(TIMEOUT_LOGIN)
-					.get();
-
-			Elements notLoggedIn = doc.select(SELECT_NOT_LOGGED_IN);
-			if (notLoggedIn.size() > 0) {
-				return false;
-			}
-		} catch (SocketTimeoutException e) {
-			// bad connection, timeout
-			return false;
-		} catch (IOException e) {
-			onHandleException(e, true);
-			return false;
-		}
-		return true;
+            return isLoggedIn(doc);
+        } catch (SocketTimeoutException e) {
+            // bad connection, timeout
+            return false;
+        } catch (IOException e) {
+            onHandleException(e, true);
+            return false;
+        }
 	}
 
 	@Override
@@ -179,7 +222,8 @@ public final class KusssHandlerImpl implements KusssHandler {
 			URL url = new URL(URL_GET_ICAL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
-			conn.setConnectTimeout(5000);
+            conn.setRequestProperty("Cookie", getCookieString());
+            conn.setConnectTimeout(5000);
 			conn.setReadTimeout(15000);
 
 			switch (eventType) {
