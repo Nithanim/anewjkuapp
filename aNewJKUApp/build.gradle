@@ -70,29 +70,24 @@ dependencies {
     googleCompile 'com.google.android.gms:play-services-analytics:7.5.0'
     compile 'com.google.android.apps.dashclock:dashclock-api:2.0.0'
     compile 'com.android.support:design:22.2.0'
-
     compile 'org.mapsforge:mapsforge-core:0.5.1'
     compile 'org.mapsforge:mapsforge-map:0.5.1'
     compile 'org.mapsforge:mapsforge-map-android:0.5.1'
-
     compile 'org.jsoup:jsoup:1.8.2'
     compile 'org.mnode.ical4j:ical4j:1.0.6'
-
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.github.alamkanak:android-week-view:1.2.3'
     compile 'com.timehop.stickyheadersrecyclerview:library:0.4.0'
-
     compile 'de.cketti.library.changelog:ckchangelog:1.2.2'
     compile('com.mikepenz:aboutlibraries:5.0.1@aar') {
         transitive = true
     }
-
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.0'
-
     compile project(':voidsinkContributors')
     compile project(':android-support-v4-preferencefragment')
     //compile project(':kussslibrary')
+    compile project(':mensaapi')
 }
 
 def appendVersionNameVersionCode(variant, defaultConfig) {

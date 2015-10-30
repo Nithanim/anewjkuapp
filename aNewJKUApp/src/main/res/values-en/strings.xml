@@ -52,6 +52,8 @@
     <string name="map_search_poi_title">Search</string>
     <string name="mensa_menu_not_available">Menu not available</string>
     <string name="mensa_title_unknown">Just another cafeteria</string>
+    <string name="mensa_price">"%.2f €"</string>
+    <string name="mensa_oehBonus">"incl %.2f € OEH Bonus"</string>
     <string name="menu_exam_register">Show in KUSSS</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

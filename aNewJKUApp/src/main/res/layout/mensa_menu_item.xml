@@ -16,7 +16,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/mensa_menu_item_name"
+                android:id="@+id/mensa_menu_item_title"
                 style="@style/Text.ItemTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,25 +44,14 @@
                 android:padding="@dimen/separator_top_bottom_margin"
                 android:textColor="?android:attr/textColorSecondary"
                 tools:text="ÖH Bonus" />
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/mensa_menu_item_soup"
-            style="@style/Text.Body1"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/mensa_menu_item_meals"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="@dimen/separator_top_bottom_margin"
-            tools:text="Soup" />
+            android:orientation="vertical"></LinearLayout>
 
-        <TextView
-            android:id="@+id/mensa_menu_item_meal"
-            style="@style/Text.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minLines="2"
-            android:padding="@dimen/separator_top_bottom_margin"
-            tools:text="Meal" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

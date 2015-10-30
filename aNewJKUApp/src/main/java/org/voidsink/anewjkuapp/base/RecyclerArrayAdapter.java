@@ -30,6 +30,8 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public abstract class RecyclerArrayAdapter<T, VH extends RecyclerView.ViewHolder>
@@ -84,6 +86,12 @@ public abstract class RecyclerArrayAdapter<T, VH extends RecyclerView.ViewHolder
 
         return items.get(position);
     }
+
+    public void sort(Comparator<T> comparator) {
+        Collections.sort(items, comparator);
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public long getItemId(int position) {

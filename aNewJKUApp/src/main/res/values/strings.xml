@@ -183,6 +183,8 @@
     <string name="mensa_title_khg" translatable="false">KHG</string>
     <string name="mensa_title_raab" translatable="false">Raab</string>
     <string name="mensa_title_unknown">eine Mensa</string>
+    <string name="mensa_price">"%.2f €"</string>
+    <string name="mensa_oehBonus">"inkl %.2f € ÖH Bonus"</string>
 
     <string name="stat_title_grade_weighted">Noten (gewichtet)</string>
     <string name="stat_title_grade">Noten</string>
